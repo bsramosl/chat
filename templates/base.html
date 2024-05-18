@@ -362,13 +362,14 @@
 								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item"
 										href="index.html">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
 								</li>
-								<li class="active">Dashboard</li>
+                                {% block titulo %}
+                                {% endblock %}
 							</ol>
 						</div>
 					</div>
                     {% block content %}
 
-                {% endblock %}
+                     {% endblock %}
 
 				</div>
 			</div>
@@ -402,15 +403,15 @@
 	<script src="{% static 'js/theme-color.js'%}"></script>
 	<!-- material -->
 	<script src="{% static 'plugins/material/material.min.js'%}"></script>
-	<!--apex chart-->
-	<script src="{% static 'plugins/apexcharts/apexcharts.min.js'%}"></script>
-	<script src="{% static 'js/pages/chart/apex/home-data.js'%}"></script>
+
 	<!-- summernote -->
 	<script src="{% static 'plugins/summernote/summernote.js'%}"></script>
 	<script src="{% static 'js/pages/summernote/summernote-data.js'%}"></script>
 
     <link href="{% static 'plugins/sweet-alert/sweetalert2.min.css'%}" rel="stylesheet"/>
     <script src="{% static 'plugins/sweet-alert/sweetalert2.min.js'%}"></script>
+{% block script %}
+{% endblock %}
 </body>
 
 <script>
@@ -428,7 +429,7 @@
         function alertaWarning(mensaje, time = 5000) {
             Swal.fire({
                 toast: true,
-                position: 'top-end',
+                position: 'bottom',
                 type: 'warning',
                 title: mensaje,
                 showConfirmButton: false,
@@ -439,7 +440,7 @@
         function alertaDanger(mensaje, time = 5000) {
             Swal.fire({
                 toast: true,
-                position: 'top-end',
+                position: 'bottom',
                 type: 'error',
                 title: mensaje,
                 showConfirmButton: false,
@@ -450,7 +451,7 @@
         function alertaInfo(mensaje, time = 5000) {
             Swal.fire({
                 toast: true,
-                position: 'top-end',
+                position: 'bottom',
                 type: 'info',
                 title: mensaje,
                 showConfirmButton: false,

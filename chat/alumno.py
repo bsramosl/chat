@@ -28,11 +28,24 @@ def view(request):
 
         if action == 'agregar':
             try:
-                form = UnidadEducativaForm(request.POST)
+                form = AlumnoForm(request.POST)
                 if form.is_valid():
-                    item = form.save(commit=False)  # No guardar en la base de datos aún
-                    # Si deseas realizar alguna manipulación adicional antes de guardar el objeto, puedes hacerlo aquí
-                    # Guardar el objeto en la base de datos
+                    user = User.objects.create_user((form.cleaned_data['nombre'].split()[0] + form.cleaned_data['apellidos'].split()[0]),
+                                                    form.cleaned_data['email'],
+                                                    form.cleaned_data['cedula'],
+                                                    first_name=form.cleaned_data['nombre'],
+                                                    last_name=form.cleaned_data['apellidos'])
+                    user.save()
+                    item = Alumno(nombre = form.cleaned_data['nombre'],
+                                apellidos = form.cleaned_data['apellidos'],
+                                cedula = form.cleaned_data['cedula'],
+                                nacimiento = form.cleaned_data['nacimiento'],
+                                sexo = form.cleaned_data['sexo'],
+                                telefono = form.cleaned_data['telefono'],
+                                email = form.cleaned_data['email'],
+                                usuario = user,
+                                unidad_educativa = form.cleaned_data['unidad_educativa'])
+
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
                     res_json = {"result": False}
@@ -50,13 +63,10 @@ def view(request):
             try:
 
                 with transaction.atomic():
-                    vendedor = UnidadEducativa.objects.get(pk=request.POST['id'])
-                    form = UnidadEducativaForm(request.POST)
+                    vendedor = Alumno.objects.get(pk=request.POST['id'])
+                    form = AlumnoForm(request.POST,instance=vendedor)
                     if form.is_valid():
-                        vendedor.nombre = form.cleaned_data['nombre']
-                        vendedor.direccion = form.cleaned_data['direccion']
-                        vendedor.telefono = form.cleaned_data['telefono']
-                        vendedor.save()
+                        form.save()
                         messages.success(request, 'Registro guardado con éxito.')
                         res_json = {"result": False}
                         return redirect(request.META.get('HTTP_REFERER', ''))
@@ -70,7 +80,7 @@ def view(request):
 
         elif action == 'eliminar':
             try:
-                item = UnidadEducativa.objects.get(pk=request.POST['id'])
+                item = Alumno.objects.get(pk=request.POST['id'])
                 item.delete()
                 messages.success(request, 'Registro eliminado con éxito.')
                 return redirect(request.META.get('HTTP_REFERER', ''))
@@ -87,9 +97,9 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = UnidadEducativaForm()
+                    form = AlumnoForm()
                     data['form'] = form
-                    template = get_template("unidadeducativa/form.html")
+                    template = get_template("alumno/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -98,11 +108,12 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = UnidadEducativa.objects.get(pk=request.GET['id'])
+                    data['item'] = item = Alumno.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
-                    form = UnidadEducativaForm(initial=initial)
+                    initial.update(model_to_dict(item.usuario))
+                    form = AlumnoForm(initial=initial)
                     data['form'] = form
-                    template = get_template("unidadeducativa/form.html")
+                    template = get_template("alumno/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -111,20 +122,20 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Administración Unidad Educativa'
-                data['title1'] = 'Unidad Educativa'
+                data['title'] = 'Administración de Alumnos'
+                data['title1'] = 'Alumnos'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = UnidadEducativa.objects.all()
+                eItems = Alumno.objects.all()
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"
                     url_vars += f"&id={id}"
                 if s:
-                    filtros = filtros & (Q(nombre__icontains=s))
+                    filtros = filtros & (Q(usuario__icontains=s))
                     data['s'] = f"{s}"
                     url_vars += f"&s={s}"
                 if filtros:
-                    eItems = eItems.filter(filtros).order_by('nombre')
+                    eItems = eItems.filter(filtros).order_by('usuario')
                 paging = MiPaginador(eItems, 15)
                 p = 1
                 try:
@@ -148,6 +159,6 @@ def view(request):
                 data['rangospaging'] = paging.rangos_paginado(p)
                 data['items'] = page.object_list
                 data['url_vars'] = url_vars
-                return render(request, "unidadeducativa/view.html", data)
+                return render(request, "alumno/view.html", data)
             except Exception as ex:
                 pass
