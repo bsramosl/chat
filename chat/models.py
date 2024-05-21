@@ -46,7 +46,7 @@ class Padre(models.Model):
     email = models.EmailField(default='', max_length=200, verbose_name=u"Correo electronico personal")
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     unidad_educativa = models.ForeignKey(UnidadEducativa, on_delete=models.CASCADE,verbose_name=u'Unidad Educativa',)
-    alumno = models.ForeignKey(Alumno,on_delete=models.CASCADE,verbose_name=u'Hijo')
+    alumno = models.ForeignKey(Alumno,on_delete=models.CASCADE,verbose_name=u'Hijo',null=True, blank=True)
 
     class Meta:
         verbose_name = "Padre"
@@ -55,33 +55,28 @@ class Padre(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellidos}"
 
-class Matricula(models.Model):
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
-    curso = models.CharField(max_length=100)
-    año_academico = models.IntegerField( blank=True, null=True, verbose_name=u"Año Academico")
+
+class Profesor(models.Model):
+    nombre = models.CharField(max_length=100,null=True,blank=True)
+    apellidos = models.CharField(max_length=100,null=True,blank=True)
+    cedula = models.CharField(max_length=20,null=True,blank=True)
+    nacimiento = models.DateField(verbose_name=u"Fecha de nacimiento", null=True, blank=True)
+    sexo = models.CharField(max_length=1,null=True, blank=True)
+    telefono = models.CharField(max_length=20,null=True, blank=True)
+    email = models.EmailField(default='', max_length=200, verbose_name=u"Correo electronico personal")
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    unidad_educativa = models.ForeignKey(UnidadEducativa, on_delete=models.CASCADE,null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "Matrículas"
+        verbose_name_plural = "Profesores"
 
     def __str__(self):
-        return f"{self.alumno} - {self.curso} - {self.año_academico}"
-
-class Inscripcion(models.Model):
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
-    curso = models.CharField(max_length=100,null=True,blank=True)
-    fecha_inscripcion = models.DateField(verbose_name=u"Fecha de nacimiento", null=True, blank=True)
-    periodo = models.CharField(max_length=100,null=True,blank=True)
-
-    class Meta:
-        verbose_name_plural = "Inscripciones"
-
-    def __str__(self):
-        return f"{self.alumno} - {self.curso} - {self.fecha_inscripcion}"
+        return f"{self.nombre} {self.apellidos}"
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=100,null=True,blank=True)
-    unidad_educativa = models.ForeignKey(UnidadEducativa, on_delete=models.CASCADE)
-    profesor = models.ForeignKey('Profesor', on_delete=models.CASCADE)
+    unidadeducativa = models.ForeignKey(UnidadEducativa, on_delete=models.CASCADE)
+    profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "Cursos"
@@ -89,28 +84,39 @@ class Curso(models.Model):
     def __str__(self):
         return self.nombre
 
-class Profesor(models.Model):
-    nombre = models.CharField(max_length=100,null=True,blank=True)
-    apellido1 = models.CharField(max_length=100,null=True,blank=True)
-    apellido2 = models.CharField(max_length=100,null=True,blank=True)
-    cedula = models.CharField(max_length=20,null=True,blank=True)
-    nacimiento = models.DateField(verbose_name=u"Fecha de nacimiento", null=True, blank=True)
-    sexo = models.CharField(max_length=1,null=True, blank=True)
-    telefono = models.CharField(max_length=20,null=True, blank=True)
-    email = models.EmailField(default='', max_length=200, verbose_name=u"Correo electronico personal")
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    unidad_educativa = models.ForeignKey(UnidadEducativa, on_delete=models.CASCADE)
+class Matricula(models.Model):
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    anoacademico = models.IntegerField(blank=True, null=True, verbose_name=u"Año Academico")
 
     class Meta:
-        verbose_name_plural = "Profesores"
+        verbose_name_plural = "Matrículas"
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido1} {self.apellido2}"
+        return f"{self.alumno} - {self.curso} - {self.anoacademico}"
+
+class Inscripcion(models.Model):
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    fechainscripcion = models.DateField(verbose_name=u"Fecha de nacimiento", null=True, blank=True)
+    periodo = models.CharField(max_length=100,null=True,blank=True)
+
+    class Meta:
+        verbose_name_plural = "Inscripciones"
+
+    def __str__(self):
+        return f"{self.alumno} - {self.curso} - {self.fechainscripcion}"
+
+class Materia(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = "Materias"
 
 class Nota(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    materia = models.ForeignKey('Materia', on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
     nota = models.FloatField()
 
     class Meta:
@@ -119,11 +125,7 @@ class Nota(models.Model):
     def __str__(self):
         return f"{self.alumno} - {self.curso} - {self.materia}"
 
-class Materia(models.Model):
-    nombre = models.CharField(max_length=100)
 
-    class Meta:
-        verbose_name_plural = "Materias"
 
     def __str__(self):
         return self.nombre

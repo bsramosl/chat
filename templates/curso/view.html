@@ -39,18 +39,16 @@
         >
           <thead>
             <tr>
-              <th>Alumno</th>
               <th>Curso</th>
-              <th>Año</th>
+              <th>Profesor</th>
               <th>Opciones</th>
             </tr>
           </thead>
           <tbody>
             {% for item in items %}
             <tr class="odd gradeX">
-              <td>{{item.alumno.nombre}}</td>
-                  <td>{{item.curso.nombre}}</td>
-                  <td>{{item.anoacademico}}</td>
+              <td>{{item.nombre}}</td>
+                  <td>{{item.profesor}}</td>
               <td>
                 <a
                   class="btn btn-success btn-xs"

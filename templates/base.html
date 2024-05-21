@@ -52,16 +52,6 @@
 				<ul class="nav navbar-nav navbar-left in">
 					<li><a href="#" class="menu-toggler sidebar-toggler"><i data-feather="menu"></i></a></li>
 				</ul>
-				<form class="search-form-opened" action="#" method="GET">
-					<div class="input-group">
-						<input type="text" class="form-control" placeholder="Search..." name="query">
-						<span class="input-group-btn">
-							<a href="javascript:;" class="btn submit">
-								<i class="icon-magnifier"></i>
-							</a>
-						</span>
-					</div>
-				</form>
 				<!-- start mobile menu -->
 				<a class="menu-toggler responsive-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
 					<span></span>
@@ -295,28 +285,40 @@
 								</div>
 							</li>
                             <li class="nav-item">
-								<a href="#" class="nav-link nav-toggle"> <i data-feather="book-open"></i>
-									<span class="title">Library</span> <span class="arrow"></span>
+                                <a href="#" class="nav-link nav-toggle"> <i data-feather="settings"></i>
+									<span class="title">Administrador</span> <span class="arrow"></span>
 								</a>
 								<ul class="sub-menu">
-									<li class="nav-item">
-										<a href="all_assets.html" class="nav-link "> <span class="title">All Library
-												Assets</span>
+                                    <li class="nav-item">
+										<a href="/unidadeducativa" class="nav-link "> <span class="title">Unidades Educativas</span>
+										</a>
+									</li>
+                                    <li class="nav-item">
+										<a href="/padre" class="nav-link "> <span class="title">Padres</span>
+										</a>
+									</li>
+                                    <li class="nav-item">
+										<a href="/alumno" class="nav-link "> <span class="title">Alumnos</span>
 										</a>
 									</li>
 									<li class="nav-item">
-										<a href="add_library.html" class="nav-link "> <span class="title">Add Library
-												Asset</span>
+										<a href="/curso" class="nav-link "> <span class="title">Curso</span>
 										</a>
 									</li>
 									<li class="nav-item">
-										<a href="add_library_bootstrap.html" class="nav-link "> <span class="title">Add
-												Asset Bootstrap</span>
+										<a href="/materia" class="nav-link "> <span class="title">Materia</span>
+										</a>
+									</li>
+                                    <li class="nav-item">
+										<a href="/matricula" class="nav-link "> <span class="title">Matricula</span>
 										</a>
 									</li>
 									<li class="nav-item">
-										<a href="edit_library.html" class="nav-link "> <span class="title">Edit
-												Asset</span>
+										<a href="/inscripcion" class="nav-link "> <span class="title">Inscripcion</span>
+										</a>
+									</li>
+                                    <li class="nav-item">
+										<a href="/nota" class="nav-link "> <span class="title">Notas</span>
 										</a>
 									</li>
 								</ul>
@@ -377,12 +379,15 @@
 		<!-- end page container -->
 		<!-- start footer -->
 		<div class="page-footer">
+
 			<div class="page-footer-inner"> 2017 &copy; Smart University Theme By
 				<a href="mailto:redstartheme@gmail.com" target="_top" class="makerCss">Redstar Theme</a>
 			</div>
 			<div class="scroll-to-top">
 				<i class="icon-arrow-up"></i>
 			</div>
+              {% include "chatbot.html" %}
+
 		</div>
 		<!-- end footer -->
 	</div>

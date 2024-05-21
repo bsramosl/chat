@@ -69,7 +69,7 @@ class MatriculaForm(forms.Form):
     curso = forms.ModelChoiceField(Curso.objects.all(), required=False,
                                     label=u'Curso',
                                     widget=forms.Select(attrs={'col': '4'}))
-    año_academico = forms.CharField(label=u"año_academico", max_length=400, required=False,
+    anoacademico = forms.CharField(label=u"Año academico", max_length=400, required=False,
                              widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
 
 
@@ -80,17 +80,25 @@ class InscripcionForm(forms.Form):
     curso = forms.ModelChoiceField(Curso.objects.all(), required=False,
                                    label=u'Curso',
                                    widget=forms.Select(attrs={'col': '4'}))
-    fecha_inscripcion = forms.DateField(required=False,
-                                   label=u'Curso',
-                                   widget=forms.Select(attrs={'col': '4'}))
+    fechainscripcion = forms.CharField(required=False,
+                                   label=u'FechaInscripcion',
+                                   widget=forms.DateInput(attrs={'col': '4'}))
     perioido = forms.CharField(label=u"Periodo", max_length=400, required=False,
                                     widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
 
 
-class CursoForm(forms.ModelForm):
+class CursoForm(forms.Form):
+    nombre = forms.CharField(label=u"Nombre", max_length=400, required=False,
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
+    unidadeducativa = forms.ModelChoiceField(UnidadEducativa.objects.all(), required=False,
+                                   label=u'Unidad Educativa',
+                                   widget=forms.Select(attrs={'col': '4'}))
+    profesor = forms.ModelChoiceField(Profesor.objects.all(), required=False,
+                                   label=u'Profesor',
+                                   widget=forms.Select(attrs={'col': '4'}))
     class Meta:
         model = Curso
-        fields = ['nombre', 'unidad_educativa', 'profesor']
+        fields = ['nombre', 'unidadeducativa', 'profesor']
 
 
 class ProfesorForm(forms.Form):
@@ -115,19 +123,21 @@ class ProfesorForm(forms.Form):
                                               widget=forms.Select(attrs={'col': '4'}))
 
 
-class NotaForm(forms.ModelForm):
-    class Meta:
-        model = Nota
-        fields = ['alumno', 'curso', 'materia', 'nota']
+class NotaForm(forms.Form):
+    alumno = forms.ModelChoiceField(Alumno.objects.all(), required=False,
+                                   label=u'Alumno',
+                                   widget=forms.Select(attrs={'col': '4'}))
+    curso = forms.ModelChoiceField(Curso.objects.all(), required=False,
+                                   label=u'Curso',
+                                   widget=forms.Select(attrs={'col': '4'}))
+    materia = forms.ModelChoiceField(Materia.objects.all(), required=False,
+                                   label=u'Materia',
+                                   widget=forms.Select(attrs={'col': '4'}))
+    nota = forms.IntegerField(label=u"Nota",required=False,
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
 
 
-class MateriaForm(forms.ModelForm):
-    class Meta:
-        model = Materia
-        fields = ['nombre']
+class MateriaForm(forms.Form):
+    nombre = forms.CharField(max_length=200, label=u'Nombre', required=False,
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
 
-
-
-def deshabilitar_campo(form, campo):
-    form.fields[campo].widget.attrs['readonly'] = True
-    form.fields[campo].widget.attrs['disabled'] = True
