@@ -30,8 +30,8 @@ def view(request):
             try:
                 form = CursoForm(request.POST)
                 if form.is_valid():
-                    item = Inscripcion(nombre = form.cleaned_data['nombre'],
-                                unidadeducativa = form.cleaned_data['unidadeducativa'],
+                    item = Curso(nombre = form.cleaned_data['nombre'],
+                                unidad_educativa = form.cleaned_data['unidad_educativa'],
                                 profesor = form.cleaned_data['profesor']
                                 )
 

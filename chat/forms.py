@@ -1,143 +1,117 @@
+from django import forms
+from django.forms import DateTimeInput
 from datetime import datetime
 
-from django.forms import DateTimeInput
-from django.utils import timezone
-from django import forms
-from django.contrib.auth.models import User
+from .models import UnidadEducativa, Persona, Curso, Materia, Nota, Matricula
 
-from .models import *
-
-
-class UnidadEducativaForm(forms.ModelForm):
-    class Meta:
-        model = UnidadEducativa
-        fields = ['nombre', 'direccion','telefono']
+class UnidadEducativaForm(forms.Form):
+    nombre = forms.CharField(label="Nombre", max_length=100, required=False,
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+    direccion = forms.CharField(label="Dirección", max_length=200, required=False,
+                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+    telefono = forms.CharField(label="Teléfono", max_length=20, required=False,
+                               widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 
-class AlumnoForm(forms.Form):
-    nombre = forms.CharField(label=u"Nombres", max_length=400, required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    apellidos = forms.CharField(label=u"Apellidos", max_length=400, required=False,
-                               widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    cedula = forms.CharField(max_length=200, label=u'Identificación', required=False,
-                                     widget=forms.TextInput(attrs={'class': 'form-control', 'col': '4'}))
-    nacimiento = forms.DateField(label=u"Fecha nacimiento", initial=datetime.now().date(),
-                                 required=False, input_formats=['%Y-%m-%d'],
-                                 widget=DateTimeInput(format='%Y-%m-%d',
-                                                      attrs={'class': 'form-control', 'col': '4', 'type': 'date'}))
-    sexo = forms.CharField(max_length=200, label=u'Sexo', required=False,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
-    telefono = forms.CharField(initial=0, required=False, label=u'Telefono.',
-                              widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'col': '6', }))
-    email = forms.CharField(max_length=200, label=u'Email', required=False,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
-    unidad_educativa = forms.ModelChoiceField(UnidadEducativa.objects.all(), required=False,
-                                       label=u'Unidad Educativa',
-                                       widget=forms.Select(attrs={'col': '4'}))
+class PersonaForm(forms.Form):
+    SEXO_CHOICES = [
+        ('1', 'Masculino'),
+        ('2', 'Femenino'),
+    ]
+    nombre = forms.CharField(label="Nombre", max_length=100, required=False,
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+    apellidos = forms.CharField(label="Apellidos", max_length=100, required=False,
+                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+    cedula = forms.CharField(label="Cédula", max_length=20, required=False,
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+    nacimiento = forms.DateField(label="Fecha de Nacimiento", initial=datetime.now().date(), required=False,
+                                 input_formats=['%Y-%m-%d'],
+                                 widget=DateTimeInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}))
+    sexo = forms.ChoiceField(label="Sexo", choices=SEXO_CHOICES, required=False,
+                             widget=forms.Select(attrs={'class': 'form-control'}))
+    telefono = forms.CharField(label="Teléfono", max_length=20, required=False,
+                               widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label="Correo Electrónico", max_length=200, required=False,
+                             widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    unidad_educativa = forms.ModelChoiceField(queryset=UnidadEducativa.objects.all(), required=False,
+                                              label="Unidad Educativa",
+                                              widget=forms.Select(attrs={'class': 'form-control'}))
+    tipo = forms.ChoiceField(choices=[('alumno', 'Alumno'), ('padre', 'Padre'), ('profesor', 'Profesor')],
+                             required=False, label="Tipo", widget=forms.HiddenInput())
+
+    def quitar(self):
+        del self.fields['tipo']
 
 
+class AlumnoForm(PersonaForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tipo'].initial = 'alumno'
+        self.fields['tipo'].widget = forms.HiddenInput()
 
-class PadreForm(forms.Form):
-    nombre = forms.CharField(label=u"Nombres", max_length=400, required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    apellidos = forms.CharField(label=u"Apellidos", max_length=400, required=False,
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    cedula = forms.CharField(max_length=200, label=u'Identificación', required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control', 'col': '4'}))
-    nacimiento = forms.DateField(label=u"Fecha nacimiento", initial=datetime.now().date(),
-                                 required=False, input_formats=['%Y-%m-%d'],
-                                 widget=DateTimeInput(format='%Y-%m-%d',
-                                                      attrs={'class': 'form-control', 'col': '4', 'type': 'date'}))
-    sexo = forms.CharField(max_length=200, label=u'Sexo', required=False,
-                           widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
-    telefono = forms.CharField(initial=0, required=False, label=u'Telefono.',
-                               widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'col': '6', }))
-    email = forms.CharField(max_length=200, label=u'Email', required=False,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
-    unidad_educativa = forms.ModelChoiceField(UnidadEducativa.objects.all(), required=False,
-                                              label=u'Unidad Educativa',
-                                              widget=forms.Select(attrs={'col': '4'}))
-    alumno = forms.ModelChoiceField(Alumno.objects.all(), required=False,
-                                              label=u'Hijo(s)',
-                                              widget=forms.Select(attrs={'col': '4'}))
+
+class PadreForm(PersonaForm):
+    hijos = forms.ModelMultipleChoiceField(queryset=Persona.objects.filter(tipo='Alumno'), required=False,
+                                           label="Hijo(s)",
+                                           widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tipo'].initial = 'padre'
+        self.fields['tipo'].widget = forms.HiddenInput()
+
+
+class ProfesorForm(PersonaForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tipo'].initial = 'profesor'
+        self.fields['tipo'].widget = forms.HiddenInput()
 
 
 class MatriculaForm(forms.Form):
-    alumno = forms.ModelChoiceField(Alumno.objects.all(), required=False,
-                                    label=u'Alumno',
-                                    widget=forms.Select(attrs={'col': '4'}))
-    curso = forms.ModelChoiceField(Curso.objects.all(), required=False,
-                                    label=u'Curso',
-                                    widget=forms.Select(attrs={'col': '4'}))
-    anoacademico = forms.CharField(label=u"Año academico", max_length=400, required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
+    alumno = forms.ModelChoiceField(queryset=Persona.objects.filter(tipo='Alumno'), required=False, label="Alumno",
+                                    widget=forms.Select(attrs={'class': 'form-control'}))
+    curso = forms.ModelChoiceField(queryset=Curso.objects.all(), required=False, label="Curso",
+                                   widget=forms.Select(attrs={'class': 'form-control'}))
+    ano_academico = forms.CharField(label="Año Académico", max_length=4, required=False,
+                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-
-class InscripcionForm(forms.Form):
-    alumno = forms.ModelChoiceField(Alumno.objects.all(), required=False,
-                                    label=u'Alumno',
-                                    widget=forms.Select(attrs={'col': '4'}))
-    curso = forms.ModelChoiceField(Curso.objects.all(), required=False,
-                                   label=u'Curso',
-                                   widget=forms.Select(attrs={'col': '4'}))
-    fechainscripcion = forms.CharField(required=False,
-                                   label=u'FechaInscripcion',
-                                   widget=forms.DateInput(attrs={'col': '4'}))
-    perioido = forms.CharField(label=u"Periodo", max_length=400, required=False,
-                                    widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
 
 
 class CursoForm(forms.Form):
-    nombre = forms.CharField(label=u"Nombre", max_length=400, required=False,
-                               widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    unidadeducativa = forms.ModelChoiceField(UnidadEducativa.objects.all(), required=False,
-                                   label=u'Unidad Educativa',
-                                   widget=forms.Select(attrs={'col': '4'}))
-    profesor = forms.ModelChoiceField(Profesor.objects.all(), required=False,
-                                   label=u'Profesor',
-                                   widget=forms.Select(attrs={'col': '4'}))
-    class Meta:
-        model = Curso
-        fields = ['nombre', 'unidadeducativa', 'profesor']
-
-
-class ProfesorForm(forms.Form):
-    nombre = forms.CharField(label=u"Nombres", max_length=400, required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    apellidos = forms.CharField(label=u"Apellidos", max_length=400, required=False,
-                                widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
-    cedula = forms.CharField(max_length=200, label=u'Identificación', required=False,
-                             widget=forms.TextInput(attrs={'class': 'form-control', 'col': '4'}))
-    nacimiento = forms.DateField(label=u"Fecha nacimiento", initial=datetime.now().date(),
-                                 required=False, input_formats=['%Y-%m-%d'],
-                                 widget=DateTimeInput(format='%Y-%m-%d',
-                                                      attrs={'class': 'form-control', 'col': '4', 'type': 'date'}))
-    sexo = forms.CharField(max_length=200, label=u'Sexo', required=False,
-                           widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
-    telefono = forms.CharField(initial=0, required=False, label=u'Telefono.',
-                               widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'col': '6', }))
-    email = forms.CharField(max_length=200, label=u'Email', required=False,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
-    unidad_educativa = forms.ModelChoiceField(UnidadEducativa.objects.all(), required=False,
-                                              label=u'Unidad Educativa',
-                                              widget=forms.Select(attrs={'col': '4'}))
+    nombre = forms.CharField(label="Nombre", max_length=100, required=False,
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+    unidad_educativa = forms.ModelChoiceField(queryset=UnidadEducativa.objects.all(), required=False, label="Unidad Educativa",
+                                              widget=forms.Select(attrs={'class': 'form-control'}))
+    profesor = forms.ModelChoiceField(queryset=Persona.objects.filter(tipo='Profesor'), required=False, label="Profesor",
+                                      widget=forms.Select(attrs={'class': 'form-control'}))
 
 
 class NotaForm(forms.Form):
-    alumno = forms.ModelChoiceField(Alumno.objects.all(), required=False,
-                                   label=u'Alumno',
-                                   widget=forms.Select(attrs={'col': '4'}))
-    curso = forms.ModelChoiceField(Curso.objects.all(), required=False,
-                                   label=u'Curso',
-                                   widget=forms.Select(attrs={'col': '4'}))
-    materia = forms.ModelChoiceField(Materia.objects.all(), required=False,
-                                   label=u'Materia',
-                                   widget=forms.Select(attrs={'col': '4'}))
-    nota = forms.IntegerField(label=u"Nota",required=False,
-                               widget=forms.TextInput(attrs={'class': 'form-control', 'col': '12'}))
+    alumno = forms.ModelChoiceField(queryset=Persona.objects.filter(tipo='Alumno'), required=False, label="Alumno",
+                                    widget=forms.Select(attrs={'class': 'form-control'}))
+    curso = forms.ModelChoiceField(queryset=Curso.objects.all(), required=False, label="Curso",
+                                   widget=forms.Select(attrs={'class': 'form-control'}))
+    materia = forms.ModelChoiceField(queryset=Materia.objects.all(), required=False, label="Materia",
+                                     widget=forms.Select(attrs={'class': 'form-control'}))
+    nota = forms.FloatField(label="Nota", required=False,
+                            widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
 
 class MateriaForm(forms.Form):
-    nombre = forms.CharField(max_length=200, label=u'Nombre', required=False,
-                            widget=forms.TextInput(attrs={'class': 'form-control', 'col': '6'}))
+    nombre = forms.CharField(label="Nombre", max_length=100, required=False,
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+
+def deshabilitar_campo(form, campo):
+    form.fields[campo].widget.attrs['readonly'] = True
+    form.fields[campo].widget.attrs['disabled'] = True
+
+
+def habilitar_campo(form, campo):
+    form.fields[campo].widget.attrs['readonly'] = False
+    form.fields[campo].widget.attrs['disabled'] = False
+
+
+def campo_solo_lectura(form, campo):
+    form.fields[campo].widget.attrs['readonly'] = True

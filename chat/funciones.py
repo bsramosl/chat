@@ -175,65 +175,6 @@ class ModeloBase(models.Model):
     class Meta:
         abstract = True
 
-def cargar_plantilla_base_simple(request, data):
-    from app.models import Modulo, Sucursal, OpcionModulo, ModuloGrupo
-    data['usuario'] = usuario = request.session['usuario']
-    modulos = Modulo.objects.filter(status=True, activo=True)
-    data['modulos'] = modulos
-    data['sucursalsesion'] = request.session['sucursalsesion']
-    if usuario.is_superuser:
-        if Sucursal.objects.values('id').filter(status=True,tipo=2).exists():
-            sucursales = Sucursal.objects.filter(status=True,tipo=2)
-    elif 'vendedor' in request.session:
-        vendedor = request.session['vendedor']
-        if vendedor.obtener_sucursal():
-            if Sucursal.objects.values('id').filter(id=vendedor.obtener_sucursal().sucursal_id).exists() and not usuario.is_superuser:
-                sucursales = Sucursal.objects.filter(id=vendedor.obtener_sucursal().sucursal_id)
-    data['sucursales'] = sucursales
-def carga_plantilla_base(request, data):
-    from app.models import Modulo,Sucursal,OpcionModulo,ModuloGrupo
-    data['currenttime'] = datetime.now()
-    data['usuario'] =usuario= request.session['usuario']
-    sucursales = None
-    modulos = None
-    opciones = None
-    data['sucursalsesion']=request.session['sucursalsesion']
-    if usuario.is_superuser:
-        if Sucursal.objects.values('id').filter(status=True).exists():
-            sucursales = Sucursal.objects.filter(status=True)
-        modulos = Modulo.objects.filter(status=True, activo=True)
-
-    elif 'vendedor' in request.session:
-        vendedor = request.session['vendedor']
-        if vendedor.obtener_sucursal():
-            if Sucursal.objects.values('id').filter(id=vendedor.obtener_sucursal().sucursal_id).exists() and not usuario.is_superuser:
-                sucursales = Sucursal.objects.filter(id=vendedor.obtener_sucursal().sucursal_id)
-        idmodulos = ModuloGrupo.objects.values_list('opcion__modulo', flat=True).filter(grupos__in=usuario.groups.all(),status=True).distinct()
-        opciones = ModuloGrupo.objects.values_list('opcion__id', flat=True).filter(grupos__in=usuario.groups.all(),status=True).distinct()
-        modulos = Modulo.objects.filter(status=True, id__in=idmodulos, activo=True)
-    data['sucursales'] = sucursales
-    data['modulos'] = modulos
-    data['misopciones'] = opciones
-    if 'ruta' not in request.session:
-        request.session['ruta'] = [['/', 'Inicio']]
-    rutalista = request.session['ruta']
-    if request.path:
-        if OpcionModulo.objects.filter(url=request.path[1:]).exists():
-            modulo = OpcionModulo.objects.filter(url=request.path[1:])[0]
-            url = ['/' + modulo.url, modulo.nombre]
-            if rutalista.count(url) <= 0:
-                if rutalista.__len__() >= 3:
-                    b = rutalista[1]
-                    rutalista.remove(b)
-                    rutalista.append(url)
-                else:
-                    rutalista.append(url)
-            request.session['ruta'] = rutalista
-            data["url_back"] = '/'
-            url_back = [data['url_back']]
-            request.session['url_back'] = url_back
-    data["ruta"] = rutalista
-
 def calculate_username(persona, variant=1):
     alfabeto = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
                 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']

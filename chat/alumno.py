@@ -36,7 +36,7 @@ def view(request):
                                                     first_name=form.cleaned_data['nombre'],
                                                     last_name=form.cleaned_data['apellidos'])
                     user.save()
-                    item = Alumno(nombre = form.cleaned_data['nombre'],
+                    item = Persona(nombre = form.cleaned_data['nombre'],
                                 apellidos = form.cleaned_data['apellidos'],
                                 cedula = form.cleaned_data['cedula'],
                                 nacimiento = form.cleaned_data['nacimiento'],
@@ -44,7 +44,8 @@ def view(request):
                                 telefono = form.cleaned_data['telefono'],
                                 email = form.cleaned_data['email'],
                                 usuario = user,
-                                unidad_educativa = form.cleaned_data['unidad_educativa'])
+                                unidad_educativa = form.cleaned_data['unidad_educativa'],
+                                tipo = 'Alumno')
 
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
@@ -63,7 +64,7 @@ def view(request):
             try:
 
                 with transaction.atomic():
-                    vendedor = Alumno.objects.get(pk=request.POST['id'])
+                    vendedor = Persona.objects.get(pk=request.POST['id'])
                     form = AlumnoForm(request.POST,instance=vendedor)
                     if form.is_valid():
                         form.save()
@@ -80,7 +81,7 @@ def view(request):
 
         elif action == 'eliminar':
             try:
-                item = Alumno.objects.get(pk=request.POST['id'])
+                item = Persona.objects.get(pk=request.POST['id'])
                 item.delete()
                 messages.success(request, 'Registro eliminado con éxito.')
                 return redirect(request.META.get('HTTP_REFERER', ''))
@@ -98,6 +99,7 @@ def view(request):
                 try:
                     data['action'] = 'agregar'
                     form = AlumnoForm()
+                    form.quitar()
                     data['form'] = form
                     template = get_template("alumno/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
@@ -108,10 +110,11 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = Alumno.objects.get(pk=request.GET['id'])
+                    data['item'] = item = Persona.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
                     initial.update(model_to_dict(item.usuario))
                     form = AlumnoForm(initial=initial)
+                    form.quitar()
                     data['form'] = form
                     template = get_template("alumno/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
@@ -125,7 +128,7 @@ def view(request):
                 data['title'] = 'Administración de Alumnos'
                 data['title1'] = 'Alumnos'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Alumno.objects.all()
+                eItems = Persona.objects.filter(tipo='Alumno')
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"

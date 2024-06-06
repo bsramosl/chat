@@ -235,17 +235,6 @@
 									</a>
 								</li>
 								<li>
-									<a href="#">
-										<i class="icon-directions"></i> Help
-									</a>
-								</li>
-								<li class="divider"> </li>
-								<li>
-									<a href="lock_screen.html">
-										<i class="icon-lock"></i> Lock
-									</a>
-								</li>
-								<li>
 									<a href="/logout">
 										<i class="icon-logout"></i> Log Out </a>
 								</li>
@@ -280,7 +269,7 @@
     {% else %}
         <p>No hay usuario autenticado en la sesión.</p>
     {% endif %}</div>
-										<div class="user-role">Administrator</div>
+										<div class="user-role"> {{ request.session.usuario.tipo }}</div>
 									</div>
 								</div>
 							</li>
@@ -297,6 +286,10 @@
 										<a href="/padre" class="nav-link "> <span class="title">Padres</span>
 										</a>
 									</li>
+                                     <li class="nav-item">
+										<a href="/profesor" class="nav-link "> <span class="title">Docente</span>
+										</a>
+									</li>
                                     <li class="nav-item">
 										<a href="/alumno" class="nav-link "> <span class="title">Alumnos</span>
 										</a>
@@ -311,10 +304,6 @@
 									</li>
                                     <li class="nav-item">
 										<a href="/matricula" class="nav-link "> <span class="title">Matricula</span>
-										</a>
-									</li>
-									<li class="nav-item">
-										<a href="/inscripcion" class="nav-link "> <span class="title">Inscripcion</span>
 										</a>
 									</li>
                                     <li class="nav-item">

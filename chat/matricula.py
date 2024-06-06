@@ -32,7 +32,7 @@ def view(request):
                 if form.is_valid():
                     item = Matricula(alumno = form.cleaned_data['alumno'],
                                 curso = form.cleaned_data['curso'],
-                                año_academico = form.cleaned_data['año_academico'])
+                                ano_academico = form.cleaned_data['ano_academico'])
 
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
@@ -96,7 +96,7 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = Padre.objects.get(pk=request.GET['id'])
+                    data['item'] = item = Matricula.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
                     form = MatriculaForm(initial=initial)
                     data['form'] = form

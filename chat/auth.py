@@ -5,11 +5,10 @@ from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from chat.funciones import *
-
 from chat.forms import *
+from django.contrib.auth.models import User, Group
 from chat.models import *
-from django.core.exceptions import ObjectDoesNotExist
-unicode = str
+
 @transaction.atomic()
 def login_user(request):
     data = {}
@@ -18,7 +17,7 @@ def login_user(request):
             action = request.POST['action']
             if action == 'login':
                 try:
-                    user = authenticate(username=request.POST['usuario'].lower(), password=request.POST['clave'])
+                    user = authenticate(username=request.POST['usuario'], password=request.POST['clave'])
                     if user is not None:
                         if not user.is_active:
                             log(u'Login fallido, usuario inactivo: %s' % (request.POST['usuario']), request, "add")
@@ -31,9 +30,15 @@ def login_user(request):
                             usuario_data = {
                                 'id': user.id,
                                 'username': user.username,
-                                # Otros atributos del usuario que necesites
                             }
+                            if user.is_superuser:
+                                usuario_data['tipo'] = 'Administrador'
+                            else:
+                                per = Persona.objects.filter(usuario=user)
+                                usuario_data['tipo'] = per.tipo
+
                             request.session['usuario'] = usuario_data
+
                             return HttpResponse(json.dumps({"result": "ok","sessionid": request.session.session_key}), content_type="application/json")
                     #log(u'Login fallido, no existe el usuario: %s' % (request.POST['usuario']), request, "add")
                     return HttpResponse(
@@ -80,19 +85,7 @@ def panel(request):
             try:
                 data['titulo'] = 'Menú Principal'
                 data['usuario'] = usuario = request.session['usuario']
-                sucursales = None
-                modulos = None
                 return render(request, "index.html", data)
             except Exception as ex:
                 return HttpResponseRedirect('/logout')
 
-
-def registrar_padre(request):
-    if request.method == 'POST':
-        form = RegistroForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-    else:
-        form = RegistroForm()
-    return render(request, 'registro.html', {'form': form})

@@ -8,7 +8,6 @@ from chat.forms import *
 from chat.funciones import *
 from chat.models import *
 from datetime import datetime
-from django.db.models import Max
 from django.template.loader import get_template
 from django.db.models import Q
 from django.contrib import messages
@@ -28,13 +27,24 @@ def view(request):
 
         if action == 'agregar':
             try:
-                form = InscripcionForm(request.POST)
+                form = PadreForm(request.POST)
                 if form.is_valid():
-                    item = Inscripcion(nombre = form.cleaned_data['nombre'],
-                                curso = form.cleaned_data['curso'],
-                                fechainscripcion = form.cleaned_data['fechainscripcion'],
-                                periodo = form.cleaned_data['periodo']
-                                )
+                    user = User.objects.create_user((form.cleaned_data['nombre'].split()[0] + form.cleaned_data['apellidos'].split()[0]),
+                                                    form.cleaned_data['email'],
+                                                    form.cleaned_data['cedula'],
+                                                    first_name=form.cleaned_data['nombre'],
+                                                    last_name=form.cleaned_data['apellidos'])
+                    user.save()
+                    item = Padre(nombre = form.cleaned_data['nombre'],
+                                apellidos = form.cleaned_data['apellidos'],
+                                cedula = form.cleaned_data['cedula'],
+                                nacimiento = form.cleaned_data['nacimiento'],
+                                sexo = form.cleaned_data['sexo'],
+                                telefono = form.cleaned_data['telefono'],
+                                email = form.cleaned_data['email'],
+                                usuario = user,
+                                unidad_educativa = form.cleaned_data['unidad_educativa'],
+                                alumno = form.cleaned_data['alumno'])
 
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
@@ -53,8 +63,8 @@ def view(request):
             try:
 
                 with transaction.atomic():
-                    vendedor = Inscripcion.objects.get(pk=request.POST['id'])
-                    form = InscripcionForm(request.POST,instance=vendedor)
+                    vendedor = Padre.objects.get(pk=request.POST['id'])
+                    form = PadreForm(request.POST,instance=vendedor)
                     if form.is_valid():
                         form.save()
                         messages.success(request, 'Registro guardado con éxito.')
@@ -70,7 +80,7 @@ def view(request):
 
         elif action == 'eliminar':
             try:
-                item = Inscripcion.objects.get(pk=request.POST['id'])
+                item = Padre.objects.get(pk=request.POST['id'])
                 item.delete()
                 messages.success(request, 'Registro eliminado con éxito.')
                 return redirect(request.META.get('HTTP_REFERER', ''))
@@ -87,9 +97,9 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = InscripcionForm()
+                    form = PadreForm()
                     data['form'] = form
-                    template = get_template("inscripcion/form.html")
+                    template = get_template("padre/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -98,11 +108,12 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = Inscripcion.objects.get(pk=request.GET['id'])
+                    data['item'] = item = Padre.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
-                    form = InscripcionForm(initial=initial)
+                    initial.update(model_to_dict(item.usuario))
+                    form = PadreForm(initial=initial)
                     data['form'] = form
-                    template = get_template("inscripcion/form.html")
+                    template = get_template("padre/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -111,43 +122,16 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Administración de Inscripcion'
-                data['title1'] = 'Inscripcion'
+                request.session
+                data['title'] = 'Ajustes'
+                data['title1'] = 'Perfil'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Inscripcion.objects.all()
-                if int(id):
-                    filtros = filtros & (Q(id=id))
-                    data['id'] = f"{id}"
-                    url_vars += f"&id={id}"
-                if s:
-                    filtros = filtros & (Q(usuario__icontains=s))
-                    data['s'] = f"{s}"
-                    url_vars += f"&s={s}"
-                if filtros:
-                    eItems = eItems.filter(filtros).order_by('usuario')
-                paging = MiPaginador(eItems, 15)
-                p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
-                    try:
-                        page = paging.page(p)
-                    except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
+                eItems = User.objects.filter()
                 data['paging'] = paging
                 data['page'] = page
                 data['rangospaging'] = paging.rangos_paginado(p)
                 data['items'] = page.object_list
                 data['url_vars'] = url_vars
-                return render(request, "inscripcion/view.html", data)
+                return render(request, "ajustes/view.html", data)
             except Exception as ex:
                 pass
