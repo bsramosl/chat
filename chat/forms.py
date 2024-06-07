@@ -85,13 +85,14 @@ class CursoForm(forms.Form):
                                               widget=forms.Select(attrs={'class': 'form-control'}))
     profesor = forms.ModelChoiceField(queryset=Persona.objects.filter(tipo='Profesor'), required=False, label="Profesor",
                                       widget=forms.Select(attrs={'class': 'form-control'}))
+    materia = forms.ModelMultipleChoiceField(queryset=Materia.objects.all(), required=False,
+                                           label="Materia",
+                                           widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
 
 
 class NotaForm(forms.Form):
     alumno = forms.ModelChoiceField(queryset=Persona.objects.filter(tipo='Alumno'), required=False, label="Alumno",
                                     widget=forms.Select(attrs={'class': 'form-control'}))
-    curso = forms.ModelChoiceField(queryset=Curso.objects.all(), required=False, label="Curso",
-                                   widget=forms.Select(attrs={'class': 'form-control'}))
     materia = forms.ModelChoiceField(queryset=Materia.objects.all(), required=False, label="Materia",
                                      widget=forms.Select(attrs={'class': 'form-control'}))
     nota = forms.FloatField(label="Nota", required=False,

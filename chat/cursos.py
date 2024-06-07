@@ -31,6 +31,13 @@ def view(request):
         if 'action' in request.GET:
             action = request.GET['action']
 
+            if action == 'materia':
+                try:
+                    data['materias'] = obtener_materias_y_notas_por_curso(request.GET['id'])
+                    return render(request, "curso/materias.html", data)
+                except Exception as ex:
+                    pass
+
 
             return HttpResponseRedirect(request.path)
 
@@ -40,11 +47,8 @@ def view(request):
                 usuario = request.session['usuario']
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 user = Persona.objects.get(pk=usuario['id'])
-                hijos = Parentesco.objects.filter(padre=user)
-                data['user'] = user
-                data['hijosc'] = hijos.count()
-                data['hijos'] = Persona.objects.filter(pk__in=hijos.values_list('hijo', flat=True))
-                data['cursos'] = Matricula.objects.filter(alumno=user)
-                return render(request, "perfil/view.html", data)
+                data['cursos'] = Curso.objects.filter(profesor=user)
+
+                return render(request, "curso/cursos.html", data)
             except Exception as ex:
                 pass

@@ -84,7 +84,7 @@ for _ in range(100):
 # Crear Cursos
 profesores = [persona for persona in personas if persona.tipo == 'Profesor']
 cursos = []
-for _ in range(20):
+for _ in range(100):
     curso = Curso(
         nombre=fake.bs(),
         unidad_educativa=random.choice(unidades_educativas),
@@ -103,7 +103,7 @@ for _ in range(20):
     materias.append(materia)
 
 # Crear Matrículas
-for _ in range(200):
+for _ in range(100):
     matricula = Matricula(
         alumno=random.choice(alumnos),
         curso=random.choice(cursos),

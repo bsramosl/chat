@@ -71,7 +71,19 @@
                                                         {% endfor %}
                                                     {% endif %}
                                                     {% if user.tipo == 'Alumno' %}
-
+                                                        {% for curso in cursos %}
+                                                            <div class="col-lg-3 col-md-6 col-12 col-sm-6">
+                                                                <div class="blogThumb">
+                                                                    <div class="course-box">
+                                                                        <h4>{{ curso.curso.nombre}}</h4>
+                                                                        <b>Profesor</b>:
+                                                                        <p><i class="ti-user"></i>{{curso.curso.profesor.nombre}} {{curso.curso.profesor.apellidos}}</p>
+                                                                         <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-info" data-upgraded=",MaterialButton,MaterialRipple">Read
+                                                                            More<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
                                                     {% endif %}
 													</div>
 												</div>

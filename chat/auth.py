@@ -34,7 +34,7 @@ def login_user(request):
                             if user.is_superuser:
                                 usuario_data['tipo'] = 'Administrador'
                             else:
-                                per = Persona.objects.filter(usuario=user)
+                                per = Persona.objects.get(usuario=user)
                                 usuario_data['tipo'] = per.tipo
 
                             request.session['usuario'] = usuario_data
