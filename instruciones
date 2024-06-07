@@ -4,7 +4,7 @@
 istalando dependencias
 ejecutar en consola o terminal ->> pip install -r requirements.txt
 
-en posgres crear base de datos --->>chatdb    y realizar backup
+en posgres crear base de datos --->>chatdb
 en settings cambiar configuracion de base de datos
 
 
@@ -12,6 +12,7 @@ para migraciones de base de datos
 ejecutar en terminal --> python manage.py makemigrations
 ejecutar en terminal --> python manage.py migrate
 
+ejecutar archivo  ->>>>>>>>>>> scriptdedatospruebas.py     para generar datos
 
 para ejecutar proyecto visual studio code ->> python mange.py runserver
 

@@ -14,6 +14,20 @@ usuarios_creados = set()
 unidades_educativas_creadas = set()
 fake = Faker()
 
+UnidadEducativa.objects.all().delete()
+Persona.objects.all().delete()
+Parentesco.objects.all().delete()
+Curso.objects.all().delete()
+Materia.objects.all().delete()
+Matricula.objects.all().delete()
+Nota.objects.all().delete()
+User.objects.all().delete()
+
+admin_user = User.objects.create_superuser('admin', 'admin@example.com', 'password123')
+if not admin_user.is_superuser:
+        admin_user.is_superuser = True
+        admin_user.save()
+
 # Crear Unidades Educativas
 unidades_educativas = []
 for _ in range(10):
