@@ -1,6 +1,26 @@
 
 
 
+istalando dependencias
+ejecutar en consola o terminal ->> pip install -r requirements.txt
 
-pip install spacy
-python -m spacy download es_core_news_md
+en posgres crear base de datos --->>chatdb    y realizar backup
+en settings cambiar configuracion de base de datos
+
+
+para migraciones de base de datos
+ejecutar en terminal --> python manage.py makemigrations
+ejecutar en terminal --> python manage.py migrate
+
+
+para ejecutar proyecto visual studio code ->> python mange.py runserver
+
+para ejecutar proyecto pychar ->> crear entorno virtual y ejecutar
+
+
+
+usuario:admin
+pass :password123
+
+
+para todos los usuarios registrados en la base de datos la pass => password123

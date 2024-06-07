@@ -1,0 +1,92 @@
+ {% extends "base.html" %}
+
+{% load static %}
+
+{% block cabecera %}
+
+{% endblock %}
+
+{% block titulo %}
+<li class="active">{{ title1 }}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+						<div class="col-md-12">
+							<!-- BEGIN PROFILE SIDEBAR -->
+							<div class="profile-sidebar">
+								<div class="card">
+									<div class="card-body no-padding height-9">
+										<div class="profile-usertitle">
+											<div class="profile-usertitle-name">{{ user.nombre }} {{ user.apellidos }}</div>
+											<div class="profile-usertitle-job"> {{ user.tipo }} </div>
+										</div>
+										<ul class="list-group list-group-unbordered">
+                                            <li class="list-group-item">
+												<b>Usuario: </b> <a class="pull-right">{{ user.usuario }}</a>
+											</li>
+											<li class="list-group-item">
+												<b>Cedula: </b> <a class="pull-right">{{ user.cedula }}</a>
+											</li>
+											<li class="list-group-item">
+												<b>Telefono: </b> <a class="pull-right">{{ user.telefono }}</a>
+											</li>
+											<li class="list-group-item">
+												<b>Email: </b> <a class="pull-right">{{ user.email }}</a>
+											</li>
+                                            <li class="list-group-item">
+												<b>Hijos: </b> <a class="pull-right">{{ hijosc }}</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<!-- END BEGIN PROFILE SIDEBAR -->
+							<!-- BEGIN PROFILE CONTENT -->
+							<div class="profile-content">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="card">
+											<div class="card-head">
+												<header>Datos</header>
+											</div>
+											<div class="card-body no-padding height-9">
+												<div class="container-fluid">
+													<div class="row">
+                                                    {% if user.tipo == 'Padre' %}
+                                                        {% for hijo in hijos %}
+                                                            <div class="col-md-5">
+                                                                <div class="prog-avatar">
+                                                                    <img src="../assets/img/user/user1.jpg" alt="" width="40" height="40">
+                                                                </div>
+                                                                <div class="details">
+                                                                    <div class="title">
+                                                                        <a href="#">{{ hijo.nombre }} </a>{{ hijo.apellidos }}
+                                                                    </div>
+                                                                    <div>
+                                                                        <span class="clsAvailable">Available</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                    {% if user.tipo == 'Alumno' %}
+
+                                                    {% endif %}
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- END PROFILE CONTENT -->
+							</div>
+						</div>
+					</div>
+
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
