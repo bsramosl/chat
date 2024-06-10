@@ -49,6 +49,8 @@ def view(request):
             if action == 'materia':
                 try:
                     data['materias'] = obtener_materias(request.GET['id'])
+                    if not data['materias']:  # Si no hay materias, redirigir a la página anterior
+                        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
                     return render(request, "curso/materias.html", data)
                 except Exception as ex:
                     pass
@@ -69,8 +71,11 @@ def view(request):
                 usuario = request.session['usuario']
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 user = Persona.objects.get(usuario_id=usuario['id'])
-                data['cursos'] = Curso.objects.filter(profesor=user)
+                if not usuario['tipo'] == 'Administrador':
+                   data['cursos'] = Curso.objects.filter(profesor=user)
+                   return render(request, "curso/cursos.html", data)
 
+                data['cursos'] = Curso.objects.all().distinct()
                 return render(request, "curso/cursos.html", data)
             except Exception as ex:
                 pass
