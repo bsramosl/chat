@@ -24,6 +24,19 @@ Nota.objects.all().delete()
 User.objects.all().delete()
 
 admin_user = User.objects.create_superuser('admin', 'admin@example.com', 'password123')
+persona = Persona(
+            nombre='admin',
+            apellidos='admin',
+            cedula=fake.ssn()[:10],
+            nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
+            sexo=random.choice(['1', '2']),
+            telefono=fake.phone_number()[:10],
+            email='admin@example.com',
+            usuario=admin_user,
+            tipo='Administrador'
+        )
+persona.save()
+
 if not admin_user.is_superuser:
         admin_user.is_superuser = True
         admin_user.save()
@@ -84,7 +97,7 @@ for _ in range(100):
 # Crear Cursos
 profesores = [persona for persona in personas if persona.tipo == 'Profesor']
 cursos = []
-for _ in range(100):
+for _ in range(20):
     curso = Curso(
         nombre=fake.bs(),
         unidad_educativa=random.choice(unidades_educativas),
@@ -95,9 +108,10 @@ for _ in range(100):
 
 # Crear Materias
 materias = []
-for _ in range(20):
+for _ in range(40):
     materia = Materia(
-        nombre=fake.word()
+        nombre=fake.word(),
+        curso = random.choice(cursos),
     )
     materia.save()
     materias.append(materia)
@@ -115,7 +129,6 @@ for _ in range(100):
 for _ in range(500):
     nota = Nota(
         alumno=random.choice(alumnos),
-        curso=random.choice(cursos),
         materia=random.choice(materias),
         nota=random.uniform(0, 10)
     )

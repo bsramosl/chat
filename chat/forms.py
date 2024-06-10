@@ -98,6 +98,12 @@ class NotaForm(forms.Form):
     nota = forms.FloatField(label="Nota", required=False,
                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
+    def quitar(self):
+        deshabilitar_campo(self, 'materia')
+        deshabilitar_campo(self, 'alumno')
+
+
+
 
 class MateriaForm(forms.Form):
     nombre = forms.CharField(label="Nombre", max_length=100, required=False,

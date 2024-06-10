@@ -12,7 +12,7 @@
 	<div class="row">
 						<div class="card-box">
 							<div class="card-head">
-								<header>Mis Cursos</header>
+								<header>Mis Materias</header>
 							</div>
 							<div class="card-body ">
 								<!-- start course list -->
@@ -22,10 +22,10 @@
 										<div class="blogThumb">
 											<div class="thumb-center"></div>
 											<div class="course-box">
-												<h4>{{ cur.materia.nombre }}</h4>
-                                                {{ cur.total_alumnos }}
+												<h4>{{ cur.materia.nombre}}</h4>
 												<p><span><i class="ti-user"></i> Professor: {{ cur.curso.profesor}}</span></p>
-												<a href="/cursos?action=materia&id={{ cur.id}}"
+                                                <p><span><i class="ti-user"></i> Materia: {{ cur.nombre}}</span></p>
+												<a href="/cursos?action=listado&id={{ cur.id}}"
 													class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect m-b-10 btn-info">Read
 													More</a>
 											</div>

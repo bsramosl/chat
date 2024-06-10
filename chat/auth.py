@@ -31,12 +31,8 @@ def login_user(request):
                                 'id': user.id,
                                 'username': user.username,
                             }
-                            if user.is_superuser:
-                                usuario_data['tipo'] = 'Administrador'
-                            else:
-                                per = Persona.objects.get(usuario=user)
-                                usuario_data['tipo'] = per.tipo
-
+                            per = Persona.objects.get(usuario=user)
+                            usuario_data['tipo'] = per.tipo
                             request.session['usuario'] = usuario_data
 
                             return HttpResponse(json.dumps({"result": "ok","sessionid": request.session.session_key}), content_type="application/json")

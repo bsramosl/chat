@@ -4,10 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="perfil padre">
+    <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="instrucciones">
+      <change afterPath="$PROJECT_DIR$/templates/curso/listadoestudiantes.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/cursos.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/cursos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/perfil.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/perfil.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/scriptdedatospruebas.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/scriptdedatospruebas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/instruciones" beforeDir="false" afterPath="$PROJECT_DIR$/instruciones" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/chatbot.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/chatbot.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/curso/materias.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/curso/materias.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +57,29 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.scriptdedatospruebas">
+  <component name="RunManager" selected="Django Server.chat">
+    <configuration name="perfil" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="chat" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/chat" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/chat/perfil.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="scriptdedatospruebas" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="chat" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -98,6 +129,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.scriptdedatospruebas" />
+        <item itemvalue="Python.perfil" />
       </list>
     </recent_temporary>
   </component>
@@ -126,7 +158,8 @@
       <workItem from="1717454812996" duration="1269000" />
       <workItem from="1717460074778" duration="632000" />
       <workItem from="1717547027321" duration="6687000" />
-      <workItem from="1717712967239" duration="8135000" />
+      <workItem from="1717712967239" duration="14367000" />
+      <workItem from="1717970334827" duration="14897000" />
     </task>
     <task id="LOCAL-00001" summary="asd">
       <option name="closed" value="true" />
@@ -168,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717718964204</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="instrucciones">
+      <option name="closed" value="true" />
+      <created>1717723079898</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1717723079898</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -190,10 +231,28 @@
     <MESSAGE value="padre" />
     <MESSAGE value="models" />
     <MESSAGE value="perfil padre" />
-    <option name="LAST_COMMIT_MESSAGE" value="perfil padre" />
+    <MESSAGE value="instrucciones" />
+    <option name="LAST_COMMIT_MESSAGE" value="instrucciones" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/chat/views.py</url>
+          <line>45</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/chat/views.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/chat$auth.coverage" NAME="auth Coverage Results" MODIFIED="1715295539005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
-    <SUITE FILE_PATH="coverage/chat$scriptdedatospruebas.coverage" NAME="scriptdedatospruebas Coverage Results" MODIFIED="1717722959810" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
+    <SUITE FILE_PATH="coverage/chat$scriptdedatospruebas.coverage" NAME="scriptdedatospruebas Coverage Results" MODIFIED="1717982004780" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
+    <SUITE FILE_PATH="coverage/chat$perfil.coverage" NAME="perfil Coverage Results" MODIFIED="1717974096447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
   </component>
 </project>

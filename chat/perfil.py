@@ -38,13 +38,15 @@ def view(request):
             try:
                 data['title'] = 'Perfil'
                 usuario = request.session['usuario']
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                user = Persona.objects.get(pk=usuario['id'])
+                user = Persona.objects.get(usuario_id=usuario['id'])
                 hijos = Parentesco.objects.filter(padre=user)
                 data['user'] = user
                 data['hijosc'] = hijos.count()
                 data['hijos'] = Persona.objects.filter(pk__in=hijos.values_list('hijo', flat=True))
-                data['cursos'] = Matricula.objects.filter(alumno=user)
+                if usuario['tipo'] == 'Alumno':
+                    data['cursos'] = Matricula.objects.filter(alumno=user)
+                elif usuario['tipo'] == 'Profesor' :
+                    data['cursos'] = Curso.objects.filter(profesor=user)
                 return render(request, "perfil/view.html", data)
             except Exception as ex:
                 pass

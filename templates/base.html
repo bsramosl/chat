@@ -222,12 +222,12 @@
 							<a class="dropdown-toggle" data-bs-toggle="dropdown" data-hover="dropdown"
 								data-close-others="true">
 								<img alt="" class="img-circle " src="{% static 'img/dp.jpg'%}" />
-								<span class="username username-hide-on-mobile"> Sneha
+								<span class="username username-hide-on-mobile">  {{ request.session.usuario.username }}
 							</a>
 							<ul class="dropdown-menu dropdown-menu-default">
 								<li>
 									<a href="/perfil">
-										<i class="icon-user"></i> Profile </a>
+										<i class="icon-user"></i> Perfil </a>
 								</li>
 								<li>
 									<a href="/ajustes">
@@ -339,6 +339,7 @@
 									</li>
 								</ul>
 							</li>
+                        {% if  request.session.usuario.tipo == 'Profesor' or request.session.usuario.tipo == 'Administrador' %}
                             <li class="nav-item">
                                     <a href="#" class="nav-link nav-toggle"> <i data-feather="book"></i>
                                         <span class="title">Cursos</span> <span class="arrow"></span>
@@ -352,6 +353,8 @@
 
                                     </ul>
                                 </li>
+                        {% endif %}
+                        {% if  request.session.usuario.tipo == 'Alumno' or request.session.usuario.tipo == 'Administrador' %}
                             <li class="nav-item">
                                     <a href="#" class="nav-link nav-toggle"> <i data-feather="briefcase"></i>
                                         <span class="title">Materias</span> <span class="arrow"></span>
@@ -364,18 +367,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                            <li class="nav-item">
-                                    <a href="#" class="nav-link nav-toggle"> <i data-feather="book-open"></i>
-                                        <span class="title">Notas</span> <span class="arrow"></span>
-                                    </a>
-                                    <ul class="sub-menu">
-                                        <li class="nav-item">
-                                            <a href="all_department.html" class="nav-link "> <span class="title">All
-                                                    Departments</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
+                         {% endif %}
 						</ul>
 					</div>
 				</div>

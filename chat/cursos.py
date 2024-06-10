@@ -31,10 +31,32 @@ def view(request):
         if 'action' in request.GET:
             action = request.GET['action']
 
+            if action == 'editar':
+                try:
+                    data['id'] = request.GET['id']
+                    data['action'] = 'editar'
+                    data['item'] = item = Nota.objects.get(pk=request.GET['id'])
+                    initial = model_to_dict(item)
+                    initial.update(model_to_dict(item.alumno))
+                    form = NotaForm(initial=initial)
+                    form.quitar()
+                    data['form'] = form
+                    template = get_template("curso/form.html")
+                    return JsonResponse({"result": True, 'data': template.render(data)})
+                except Exception as ex:
+                    pass
+
             if action == 'materia':
                 try:
-                    data['materias'] = obtener_materias_y_notas_por_curso(request.GET['id'])
+                    data['materias'] = obtener_materias(request.GET['id'])
                     return render(request, "curso/materias.html", data)
+                except Exception as ex:
+                    pass
+
+            if action == 'listado':
+                try:
+                    data['estudiantes'] = Nota.objects.filter(materia_id=request.GET['id'])
+                    return render(request, "curso/listadoestudiantes.html", data)
                 except Exception as ex:
                     pass
 
@@ -46,7 +68,7 @@ def view(request):
                 data['title'] = 'Perfil'
                 usuario = request.session['usuario']
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                user = Persona.objects.get(pk=usuario['id'])
+                user = Persona.objects.get(usuario_id=usuario['id'])
                 data['cursos'] = Curso.objects.filter(profesor=user)
 
                 return render(request, "curso/cursos.html", data)
