@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.forms import model_to_dict
@@ -28,24 +27,13 @@ def view(request):
 
         if action == 'agregar':
             try:
-                form = AlumnoForm(request.POST)
+                form = NotaForm(request.POST)
                 if form.is_valid():
-                    user = User.objects.create_user((form.cleaned_data['nombre'].split()[0] + form.cleaned_data['apellidos'].split()[0]),
-                                                    form.cleaned_data['email'],
-                                                    form.cleaned_data['cedula'],
-                                                    first_name=form.cleaned_data['nombre'],
-                                                    last_name=form.cleaned_data['apellidos'])
-                    user.save()
-                    item = Persona(nombre = form.cleaned_data['nombre'],
-                                apellidos = form.cleaned_data['apellidos'],
-                                cedula = form.cleaned_data['cedula'],
-                                nacimiento = form.cleaned_data['nacimiento'],
-                                sexo = form.cleaned_data['sexo'],
-                                telefono = form.cleaned_data['telefono'],
-                                email = form.cleaned_data['email'],
-                                usuario = user,
-                                unidad_educativa = form.cleaned_data['unidad_educativa'],
-                                tipo = 'Alumno')
+                    item = Nota(alumno = form.cleaned_data['alumno'],
+                                curso = form.cleaned_data['curso'],
+                                materia = form.cleaned_data['materia'],
+                                nota = form.cleaned_data['nota']
+                                )
 
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
@@ -64,8 +52,8 @@ def view(request):
             try:
 
                 with transaction.atomic():
-                    vendedor = Persona.objects.get(pk=request.POST['id'])
-                    form = AlumnoForm(request.POST,instance=vendedor)
+                    vendedor = Nota.objects.get(pk=request.POST['id'])
+                    form = NotaForm(request.POST,instance=vendedor)
                     if form.is_valid():
                         form.save()
                         messages.success(request, 'Registro guardado con éxito.')
@@ -81,7 +69,7 @@ def view(request):
 
         elif action == 'eliminar':
             try:
-                item = Persona.objects.get(pk=request.POST['id'])
+                item = Nota.objects.get(pk=request.POST['id'])
                 item.delete()
                 messages.success(request, 'Registro eliminado con éxito.')
                 return redirect(request.META.get('HTTP_REFERER', ''))
@@ -98,10 +86,9 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = AlumnoForm()
-                    form.quitar()
+                    form = NotaForm()
                     data['form'] = form
-                    template = get_template("alumno/form.html")
+                    template = get_template("nota/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -110,13 +97,12 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = Persona.objects.get(pk=request.GET['id'])
+                    data['item'] = item = Nota.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
                     initial.update(model_to_dict(item.usuario))
-                    form = AlumnoForm(initial=initial)
-                    form.quitar()
+                    form = NotaForm(initial=initial)
                     data['form'] = form
-                    template = get_template("alumno/form.html")
+                    template = get_template("nota/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -125,10 +111,10 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Administración de Alumnos'
-                data['title1'] = 'Alumnos'
+                data['title'] = 'Administración de Notas'
+                data['title1'] = 'Nota'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Persona.objects.filter(tipo='Alumno')
+                eItems = Nota.objects.all()
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"
@@ -141,27 +127,9 @@ def view(request):
                     eItems = eItems.filter(filtros).order_by('usuario')
                 paging = MiPaginador(eItems, 15)
                 p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
-                    try:
-                        page = paging.page(p)
-                    except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['page'] = page
                 data['rangospaging'] = paging.rangos_paginado(p)
-                data['items'] = page.object_list
+                data['items'] = eItems
                 data['url_vars'] = url_vars
-                return render(request, "alumno/view.html", data)
+                return render(request, "nota/view.html", data)
             except Exception as ex:
                 pass

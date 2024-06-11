@@ -43,7 +43,7 @@ if not admin_user.is_superuser:
 
 # Crear Unidades Educativas
 unidades_educativas = []
-for _ in range(10):
+for _ in range(3):
     nombre_unidad = fake.company()
     if nombre_unidad not in unidades_educativas_creadas:
         unidad = UnidadEducativa(

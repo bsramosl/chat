@@ -33,7 +33,7 @@
           </div>
         </div>
         <table
-          class="table table-striped table-bordered table-hover table-checkable order-column"
+          class="table table-striped table-bordered table-hover display order-column"
           style="width: 100%"
           id="example4"
         >
@@ -81,34 +81,6 @@
   </div>
 </div>
 
-<div class="card-header py-3">
-  <div class="row">
-    <div class="col-2"></div>
-    <div class="col-1">
-      <div class="input-group-append">
-        <a
-          class="btn color-purple-icon"
-          href="javascript:void(0);"
-          onclick="busquedabi()"
-          id="button-addon2"
-          ><i class="fa fa-search"></i
-        ></a>
-        {% if s or m %}
-        <a
-          title="Ver todo"
-          href="{{ request.path }}"
-          class="btn color-purple-icon tr cleartext"
-          ><i class="fas fa-sync-alt"></i
-        ></a>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
-<!--areglarrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr-->
-
-{% include 'paginacion.html' %}
-
 <div class="modal fade static" id="itemspanel">
   <div
     class="modal-dialog modal-dialog-centered modal-lg"
@@ -153,6 +125,7 @@
 <script src="{% static 'plugins/datatables/plugins/bootstrap/dataTables.bootstrap5.min.js'%}"></script>
 <script type="text/javascript" src="/static/js/form.js"></script>
 <script type="text/javascript">
+new DataTable('#example4');
   $(function () {
     busquedabi = function () {
       var term = $("#searchinput").val().trim().toUpperCase();

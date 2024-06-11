@@ -28,12 +28,11 @@ def view(request):
 
         if action == 'agregar':
             try:
-                form = CursoForm(request.POST)
+                form = UnidadEducativaForm(request.POST)
                 if form.is_valid():
-                    item = Curso(nombre = form.cleaned_data['nombre'],
-                                unidad_educativa = form.cleaned_data['unidad_educativa'],
-                                profesor = form.cleaned_data['profesor']
-                                )
+                    item = UnidadEducativa(nombre = form.cleaned_data['nombre'],
+                                direccion = form.cleaned_data['direccion'],
+                                telefono = form.cleaned_data['telefono'],                                )
 
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
@@ -52,10 +51,13 @@ def view(request):
             try:
 
                 with transaction.atomic():
-                    vendedor = Curso.objects.get(pk=request.POST['id'])
-                    form = CursoForm(request.POST,instance=vendedor)
+                    vendedor = UnidadEducativa.objects.get(pk=request.POST['id'])
+                    form = UnidadEducativaForm(request.POST)
                     if form.is_valid():
-                        form.save()
+                        vendedor.nombre = form.cleaned_data['nombre']
+                        vendedor.direccion = form.cleaned_data['direccion']
+                        vendedor.telefono = form.cleaned_data['telefono']
+                        vendedor.save()
                         messages.success(request, 'Registro guardado con éxito.')
                         res_json = {"result": False}
                         return redirect(request.META.get('HTTP_REFERER', ''))
@@ -69,7 +71,7 @@ def view(request):
 
         elif action == 'eliminar':
             try:
-                item = Curso.objects.get(pk=request.POST['id'])
+                item = UnidadEducativa.objects.get(pk=request.POST['id'])
                 item.delete()
                 messages.success(request, 'Registro eliminado con éxito.')
                 return redirect(request.META.get('HTTP_REFERER', ''))
@@ -86,9 +88,9 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = CursoForm()
+                    form = UnidadEducativaForm()
                     data['form'] = form
-                    template = get_template("curso/form.html")
+                    template = get_template("unidadeducativa/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -97,56 +99,38 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = Curso.objects.get(pk=request.GET['id'])
+                    data['item'] = item = UnidadEducativa.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
-                    form = CursoForm(initial=initial)
+                    form = UnidadEducativaForm(initial=initial)
                     data['form'] = form
-                    template = get_template("curso/form.html")
+                    template = get_template("unidadeducativa/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
-
             return HttpResponseRedirect(request.path)
 
         else:
             try:
-                data['title'] = 'Administración de Cursos'
-                data['title1'] = 'Curso'
+                data['title'] = 'Administración Unidad Educativa'
+                data['title1'] = 'Unidad Educativa'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Curso.objects.all()
+                eItems = UnidadEducativa.objects.all()
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"
                     url_vars += f"&id={id}"
                 if s:
-                    filtros = filtros & (Q(usuario__icontains=s))
+                    filtros = filtros & (Q(nombre__icontains=s))
                     data['s'] = f"{s}"
                     url_vars += f"&s={s}"
                 if filtros:
-                    eItems = eItems.filter(filtros).order_by('usuario')
+                    eItems = eItems.filter(filtros).order_by('nombre')
                 paging = MiPaginador(eItems, 15)
                 p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
-                    try:
-                        page = paging.page(p)
-                    except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['page'] = page
+
                 data['rangospaging'] = paging.rangos_paginado(p)
-                data['items'] = page.object_list
+                data['items'] = eItems
                 data['url_vars'] = url_vars
-                return render(request, "curso/view.html", data)
+                return render(request, "unidadeducativa/view.html", data)
             except Exception as ex:
                 pass

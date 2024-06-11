@@ -28,12 +28,9 @@ def view(request):
 
         if action == 'agregar':
             try:
-                form = MatriculaForm(request.POST)
+                form = MateriaForm(request.POST)
                 if form.is_valid():
-                    item = Matricula(alumno = form.cleaned_data['alumno'],
-                                curso = form.cleaned_data['curso'],
-                                ano_academico = form.cleaned_data['ano_academico'])
-
+                    item = Materia(nombre = form.cleaned_data['nombre'])
                     item.save()
                     messages.success(request, 'Registro guardado con éxito.')
                     res_json = {"result": False}
@@ -51,8 +48,8 @@ def view(request):
             try:
 
                 with transaction.atomic():
-                    vendedor = Matricula.objects.get(pk=request.POST['id'])
-                    form = MatriculaForm(request.POST,instance=vendedor)
+                    vendedor = Materia.objects.get(pk=request.POST['id'])
+                    form = MateriaForm(request.POST,instance=vendedor)
                     if form.is_valid():
                         form.save()
                         messages.success(request, 'Registro guardado con éxito.')
@@ -68,7 +65,7 @@ def view(request):
 
         elif action == 'eliminar':
             try:
-                item = Matricula.objects.get(pk=request.POST['id'])
+                item = Materia.objects.get(pk=request.POST['id'])
                 item.delete()
                 messages.success(request, 'Registro eliminado con éxito.')
                 return redirect(request.META.get('HTTP_REFERER', ''))
@@ -85,9 +82,9 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = MatriculaForm()
+                    form = MateriaForm()
                     data['form'] = form
-                    template = get_template("matricula/form.html")
+                    template = get_template("materia/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -96,11 +93,11 @@ def view(request):
                 try:
                     data['id'] = request.GET['id']
                     data['action'] = 'editar'
-                    data['item'] = item = Matricula.objects.get(pk=request.GET['id'])
+                    data['item'] = item = Materia.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
-                    form = MatriculaForm(initial=initial)
+                    form = MateriaForm(initial=initial)
                     data['form'] = form
-                    template = get_template("matricula/form.html")
+                    template = get_template("materia/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -109,10 +106,10 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Administración de Matriculas'
-                data['title1'] = 'Matricula'
+                data['title'] = 'Administración de Materia'
+                data['title1'] = 'Materias'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Matricula.objects.all()
+                eItems = Materia.objects.all()
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"
@@ -125,27 +122,9 @@ def view(request):
                     eItems = eItems.filter(filtros).order_by('usuario')
                 paging = MiPaginador(eItems, 15)
                 p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
-                    try:
-                        page = paging.page(p)
-                    except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['page'] = page
                 data['rangospaging'] = paging.rangos_paginado(p)
-                data['items'] = page.object_list
+                data['items'] = eItems
                 data['url_vars'] = url_vars
-                return render(request, "matricula/view.html", data)
+                return render(request, "materia/view.html", data)
             except Exception as ex:
                 pass

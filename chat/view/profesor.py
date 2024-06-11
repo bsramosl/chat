@@ -45,7 +45,7 @@ def view(request):
                                 email = form.cleaned_data['email'],
                                 usuario = user,
                                 unidad_educativa = form.cleaned_data['unidad_educativa'],
-                                tipo = 'Padre')
+                                tipo = 'Profesor')
 
                     item.save()
 
@@ -66,7 +66,7 @@ def view(request):
 
                 with transaction.atomic():
                     vendedor = Persona.objects.get(pk=request.POST['id'])
-                    form = PadreForm(request.POST,instance=vendedor)
+                    form = ProfesorForm(request.POST,instance=vendedor)
                     if form.is_valid():
                         form.save()
                         messages.success(request, 'Registro guardado con éxito.')
@@ -99,7 +99,7 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = PadreForm()
+                    form = ProfesorForm()
                     form.quitar()
                     data['form'] = form
                     template = get_template("padre/form.html")
@@ -114,7 +114,7 @@ def view(request):
                     data['item'] = item = Persona.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
                     initial.update(model_to_dict(item.usuario))
-                    form = PadreForm(initial=initial)
+                    form = ProfesorForm(initial=initial)
                     form.quitar()
                     data['form'] = form
                     template = get_template("padre/form.html")
@@ -126,10 +126,10 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Administración de Padres'
-                data['title1'] = 'Padres'
+                data['title'] = 'Administración de Profesores'
+                data['title1'] = 'Profesor'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Persona.objects.filter(tipo='Padre')
+                eItems = Persona.objects.filter(tipo='Profesor')
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"
@@ -142,27 +142,9 @@ def view(request):
                     eItems = eItems.filter(filtros).order_by('usuario')
                 paging = MiPaginador(eItems, 15)
                 p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
-                    try:
-                        page = paging.page(p)
-                    except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['page'] = page
                 data['rangospaging'] = paging.rangos_paginado(p)
-                data['items'] = page.object_list
+                data['items'] = eItems
                 data['url_vars'] = url_vars
-                return render(request, "padre/view.html", data)
+                return render(request, "profesor/view.html", data)
             except Exception as ex:
                 pass

@@ -1,11 +1,10 @@
-from chat import auth,settings
+from chat import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from chat.views import *
-from chat import unidadeducativa , alumno , padre, matricula, nota,curso,materia ,profesor,ajustes,perfil,cursos
-
-
+from chat.view import alumno, materia,curso, cursos, padre, matricula, nota, profesor, unidadeducativa, perfil, ajustes
+from chat.auth import auth
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',auth.panel,name="principal"),

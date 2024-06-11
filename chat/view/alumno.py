@@ -28,7 +28,7 @@ def view(request):
 
         if action == 'agregar':
             try:
-                form = PadreForm(request.POST)
+                form = AlumnoForm(request.POST)
                 if form.is_valid():
                     user = User.objects.create_user((form.cleaned_data['nombre'].split()[0] + form.cleaned_data['apellidos'].split()[0]),
                                                     form.cleaned_data['email'],
@@ -45,10 +45,9 @@ def view(request):
                                 email = form.cleaned_data['email'],
                                 usuario = user,
                                 unidad_educativa = form.cleaned_data['unidad_educativa'],
-                                tipo = 'Profesor')
+                                tipo = 'Alumno')
 
                     item.save()
-
                     messages.success(request, 'Registro guardado con éxito.')
                     res_json = {"result": False}
                     return redirect(request.META.get('HTTP_REFERER', ''))
@@ -66,7 +65,7 @@ def view(request):
 
                 with transaction.atomic():
                     vendedor = Persona.objects.get(pk=request.POST['id'])
-                    form = ProfesorForm(request.POST,instance=vendedor)
+                    form = AlumnoForm(request.POST,instance=vendedor)
                     if form.is_valid():
                         form.save()
                         messages.success(request, 'Registro guardado con éxito.')
@@ -99,10 +98,10 @@ def view(request):
             if action == 'agregar':
                 try:
                     data['action'] = 'agregar'
-                    form = ProfesorForm()
+                    form = AlumnoForm()
                     form.quitar()
                     data['form'] = form
-                    template = get_template("padre/form.html")
+                    template = get_template("alumno/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -114,10 +113,10 @@ def view(request):
                     data['item'] = item = Persona.objects.get(pk=request.GET['id'])
                     initial = model_to_dict(item)
                     initial.update(model_to_dict(item.usuario))
-                    form = ProfesorForm(initial=initial)
+                    form = AlumnoForm(initial=initial)
                     form.quitar()
                     data['form'] = form
-                    template = get_template("padre/form.html")
+                    template = get_template("alumno/form.html")
                     return JsonResponse({"result": True, 'data': template.render(data)})
                 except Exception as ex:
                     pass
@@ -126,10 +125,10 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Administración de Profesores'
-                data['title1'] = 'Profesor'
+                data['title'] = 'Administración de Alumnos'
+                data['title1'] = 'Alumnos'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
-                eItems = Persona.objects.filter(tipo='Profesor')
+                eItems = Persona.objects.filter(tipo='Alumno')
                 if int(id):
                     filtros = filtros & (Q(id=id))
                     data['id'] = f"{id}"
@@ -142,27 +141,9 @@ def view(request):
                     eItems = eItems.filter(filtros).order_by('usuario')
                 paging = MiPaginador(eItems, 15)
                 p = 1
-                try:
-                    paginasesion = 1
-                    if 'paginador' in request.session:
-                        paginasesion = int(request.session['paginador'])
-                    if 'page' in request.GET:
-                        p = int(request.GET['page'])
-                    else:
-                        p = paginasesion
-                    try:
-                        page = paging.page(p)
-                    except:
-                        p = 1
-                    page = paging.page(p)
-                except:
-                    page = paging.page(p)
-                request.session['paginador'] = p
-                data['paging'] = paging
-                data['page'] = page
                 data['rangospaging'] = paging.rangos_paginado(p)
-                data['items'] = page.object_list
+                data['items'] = eItems
                 data['url_vars'] = url_vars
-                return render(request, "profesor/view.html", data)
+                return render(request, "alumno/view.html", data)
             except Exception as ex:
                 pass
