@@ -63,10 +63,8 @@ def view(request):
                 request.session
                 data['title'] = 'Ajustes'
                 data['title1'] = 'Perfil'
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 eItems = User.objects.filter()
                 data['items'] = eItems
-                data['url_vars'] = url_vars
                 return render(request, "ajustes/view.html", data)
             except Exception as ex:
                 pass

@@ -69,7 +69,6 @@ def view(request):
             try:
                 data['title'] = 'Cursos'
                 usuario = request.session['usuario']
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 user = Persona.objects.get(usuario_id=usuario['id'])
                 if not usuario['tipo'] == 'Administrador':
                    data['cursos'] = Curso.objects.filter(profesor=user)

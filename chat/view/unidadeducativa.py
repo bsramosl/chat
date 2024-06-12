@@ -21,7 +21,6 @@ from django.contrib import messages
 def view(request):
     data = {}
     data['usuario'] = usuario = request.session['usuario']
-   #cargar_plantilla_base_simple(request, data)
     hoy = datetime.now().date()
     if request.method == 'POST':
         action = request.POST['action']
@@ -47,9 +46,7 @@ def view(request):
 
 
         elif action == 'editar':
-
             try:
-
                 with transaction.atomic():
                     vendedor = UnidadEducativa.objects.get(pk=request.POST['id'])
                     form = UnidadEducativaForm(request.POST)
@@ -113,10 +110,8 @@ def view(request):
             try:
                 data['title'] = 'Administración Unidad Educativa'
                 data['title1'] = 'Unidad Educativa'
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 eItems = UnidadEducativa.objects.all()
                 data['items'] = eItems
-                data['url_vars'] = url_vars
                 return render(request, "unidadeducativa/view.html", data)
             except Exception as ex:
                 pass

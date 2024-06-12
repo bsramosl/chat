@@ -127,10 +127,8 @@ def view(request):
             try:
                 data['title'] = 'Administración de Padres'
                 data['title1'] = 'Padres'
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 eItems = Persona.objects.filter(tipo='Padre')
                 data['items'] = eItems
-                data['url_vars'] = url_vars
                 return render(request, "padre/view.html", data)
             except Exception as ex:
                 pass

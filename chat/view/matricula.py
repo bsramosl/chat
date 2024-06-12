@@ -111,10 +111,8 @@ def view(request):
             try:
                 data['title'] = 'Administración de Matriculas'
                 data['title1'] = 'Matricula'
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 eItems = Matricula.objects.all()
                 data['items'] = eItems
-                data['url_vars'] = url_vars
                 return render(request, "matricula/view.html", data)
             except Exception as ex:
                 pass

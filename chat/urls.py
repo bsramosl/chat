@@ -21,7 +21,6 @@ urlpatterns = [
     path('send_message', send_message, name='send_message'),
     path('ajustes', ajustes.view, name='ajustes'),
     path('perfil', perfil.view, name='perfil'),
-
     path('cursos', cursos.view, name='cursos'),
 
 

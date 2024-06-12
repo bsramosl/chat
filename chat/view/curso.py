@@ -112,10 +112,8 @@ def view(request):
             try:
                 data['title'] = 'Administración de Cursos'
                 data['title1'] = 'Curso'
-                filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 eItems = Curso.objects.all()
                 data['items'] = eItems
-                data['url_vars'] = url_vars
                 return render(request, "curso/view.html", data)
             except Exception as ex:
                 pass

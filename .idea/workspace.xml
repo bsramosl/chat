@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="cambios en chatbot">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/auth/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/auth/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/funciones.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/funciones.py" afterDir="false" />
+    <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="cambios en funciones para edicion general">
+      <change beforePath="$PROJECT_DIR$/chat/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/ajustes.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/ajustes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/view/alumno.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/alumno.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/view/curso.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/curso.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/view/cursos.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/cursos.py" afterDir="false" />
@@ -18,16 +16,7 @@
       <change beforePath="$PROJECT_DIR$/chat/view/padre.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/padre.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/view/profesor.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/profesor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/view/unidadeducativa.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/unidadeducativa.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/alumno/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/alumno/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/curso/cursos.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/curso/cursos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/curso/materias.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/curso/materias.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/curso/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/curso/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/materia/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/materia/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/matricula/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/matricula/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/nota/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/nota/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/padre/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/padre/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/profesor/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/profesor/view.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/unidadeducativa/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/unidadeducativa/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +167,7 @@
       <workItem from="1717712967239" duration="14367000" />
       <workItem from="1717970334827" duration="15393000" />
       <workItem from="1718063327902" duration="6762000" />
-      <workItem from="1718145088724" duration="9416000" />
+      <workItem from="1718145088724" duration="9760000" />
     </task>
     <task id="LOCAL-00001" summary="asd">
       <option name="closed" value="true" />
@@ -244,7 +233,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718149463622</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="cambios en funciones para edicion general">
+      <option name="closed" value="true" />
+      <created>1718155957616</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1718155957616</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -269,7 +266,8 @@
     <MESSAGE value="instrucciones" />
     <MESSAGE value="cambios en chat" />
     <MESSAGE value="cambios en chatbot" />
-    <option name="LAST_COMMIT_MESSAGE" value="cambios en chatbot" />
+    <MESSAGE value="cambios en funciones para edicion general" />
+    <option name="LAST_COMMIT_MESSAGE" value="cambios en funciones para edicion general" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
