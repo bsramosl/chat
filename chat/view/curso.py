@@ -53,9 +53,9 @@ def view(request):
 
                 with transaction.atomic():
                     vendedor = Curso.objects.get(pk=request.POST['id'])
-                    form = CursoForm(request.POST,instance=vendedor)
+                    form = CursoForm(request.POST)
                     if form.is_valid():
-                        form.save()
+                        actualizar_instancia_con_form(vendedor,form)
                         messages.success(request, 'Registro guardado con éxito.')
                         res_json = {"result": False}
                         return redirect(request.META.get('HTTP_REFERER', ''))
@@ -114,19 +114,6 @@ def view(request):
                 data['title1'] = 'Curso'
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 eItems = Curso.objects.all()
-                if int(id):
-                    filtros = filtros & (Q(id=id))
-                    data['id'] = f"{id}"
-                    url_vars += f"&id={id}"
-                if s:
-                    filtros = filtros & (Q(usuario__icontains=s))
-                    data['s'] = f"{s}"
-                    url_vars += f"&s={s}"
-                if filtros:
-                    eItems = eItems.filter(filtros).order_by('usuario')
-                paging = MiPaginador(eItems, 15)
-                p = 1
-                data['rangospaging'] = paging.rangos_paginado(p)
                 data['items'] = eItems
                 data['url_vars'] = url_vars
                 return render(request, "curso/view.html", data)

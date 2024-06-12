@@ -67,7 +67,7 @@ def view(request):
 
         else:
             try:
-                data['title'] = 'Perfil'
+                data['title'] = 'Cursos'
                 usuario = request.session['usuario']
                 filtros,s, url_vars, id = Q(), request.GET.get('s', ''),'', request.GET.get('id', '0')
                 user = Persona.objects.get(usuario_id=usuario['id'])

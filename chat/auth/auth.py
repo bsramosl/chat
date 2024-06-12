@@ -20,7 +20,6 @@ def login_user(request):
                     user = authenticate(username=request.POST['usuario'], password=request.POST['clave'])
                     if user is not None:
                         if not user.is_active:
-                            log(u'Login fallido, usuario inactivo: %s' % (request.POST['usuario']), request, "add")
                             return HttpResponse(
                                 json.dumps({"result": "bad", "mensaje": 'Login fallido, usuario inactivo.'}),
                                 content_type="application/json")
@@ -36,7 +35,6 @@ def login_user(request):
                             request.session['usuario'] = usuario_data
 
                             return HttpResponse(json.dumps({"result": "ok","sessionid": request.session.session_key}), content_type="application/json")
-                    #log(u'Login fallido, no existe el usuario: %s' % (request.POST['usuario']), request, "add")
                     return HttpResponse(
                         json.dumps({"result": "bad", "mensaje": 'Login fallido, usuario o clave incorrecta.'}),
                         content_type="application/json")

@@ -25,46 +25,22 @@ from datetime import datetime
 
 unicode = str
 
+def actualizar_instancia_con_form(instancia, formulario):
+    """
+    Actualiza los campos de la instancia del modelo con los datos del formulario.
+    """
+    # Obtener el valor actual del campo 'tipo' en la instancia del modelo
+    tipo_instancia = getattr(instancia, 'tipo', None)
 
-class MiPaginador(Paginator):
-    def __init__(self, object_list, per_page, orphans=0, allow_empty_first_page=True, rango=5):
-        super(MiPaginador, self).__init__(object_list, per_page, orphans=orphans, allow_empty_first_page=allow_empty_first_page)
-        self.rango = rango
-        self.paginas = []
-        self.primera_pagina = False
-        self.ultima_pagina = False
+    for field in formulario.cleaned_data:
+        if field == 'hijos':  # Manejar campo many-to-many
+            getattr(instancia, field).set(formulario.cleaned_data[field])
+        else:
+            setattr(instancia, field, formulario.cleaned_data[field])
+    if tipo_instancia:
+        instancia.tipo = tipo_instancia
 
-    def rangos_paginado(self, pagina):
-        left = pagina - self.rango
-        right = pagina + self.rango
-        if left < 1:
-            left = 1
-        if right > self.num_pages:
-            right = self.num_pages
-        self.paginas = range(left, right + 1)
-        self.primera_pagina = True if left > 1 else False
-        self.ultima_pagina = True if right < self.num_pages else False
-        self.ellipsis_izquierda = left - 1
-        self.ellipsis_derecha = right + 1
-
-
-
-def log(mensaje, request, accion, user=None):
-
-    if accion == "del":
-        logaction = DELETION
-    elif accion == "add":
-        logaction = ADDITION
-    else:
-        logaction = CHANGE
-
-    LogEntry.objects.log_action(
-        user_id=request.user.id if not user else user.id,
-        content_type_id=None,
-        object_id=None,
-        object_repr='',
-        action_flag=logaction,
-        change_message=unicode(mensaje))
+    instancia.save()
 
 
 def convertir_fecha(s):
@@ -139,41 +115,6 @@ def round_half_up(n, decimals=0):
     import math
     multiplier = 10 ** decimals
     return math.floor(n*multiplier + 0.5) / multiplier
-
-class ModeloBase(models.Model):
-    """ Modelo base para todos los modelos del proyecto """
-    from django.contrib.auth.models import User
-    status = models.BooleanField(default=True)
-    usuario_creacion = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
-    fecha_creacion = models.DateTimeField(blank=True, null=True)
-    usuario_modificacion = models.ForeignKey(User, related_name='+', blank=True, null=True, on_delete=models.SET_NULL)
-    fecha_modificacion = models.DateTimeField(blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        usuario = None
-        fecha_modificacion = datetime.now()
-        fecha_creacion = None
-        if len(args):
-            usuario = args[0].user.id
-        for key, value in kwargs.items():
-            if 'usuario_id' == key:
-                usuario = value
-            if 'fecha_modificacion' == key:
-                fecha_modificacion = value
-            if 'fecha_creacion' == key:
-                fecha_creacion = value
-        if self.id:
-            self.usuario_modificacion_id = usuario if usuario else 1
-            self.fecha_modificacion = fecha_modificacion
-        else:
-            self.usuario_creacion_id = usuario if usuario else 1
-            self.fecha_creacion = fecha_modificacion
-            if fecha_creacion:
-                self.fecha_creacion = fecha_creacion
-        models.Model.save(self)
-
-    class Meta:
-        abstract = True
 
 def calculate_username(persona, variant=1):
     alfabeto = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',

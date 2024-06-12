@@ -40,7 +40,6 @@
           <thead>
             <tr>
               <th>Alumno</th>
-              <th>Curso</th>
               <th>Materia</th>
               <th>Nota</th>
               <th>Opciones</th>
@@ -50,8 +49,7 @@
             {% for item in items %}
             <tr class="odd gradeX">
               <td>{{item.alumno.nombre}}</td>
-                  <td>{{item.curso.nombre}}</td>
-                  <td>{{item.materia.nombre}}</td>
+                   <td>{{item.materia.nombre}}</td>
                 <td>{{item.nota}}</td>
               <td>
                 <a
@@ -119,29 +117,37 @@
   </div>
 </div>
 {% endblock %} {% block script %}
-<script
-  type="text/javascript"
-  src="/static/js/jquery.isloading.min.js"
-></script>
 <script src="{% static 'plugins/datatables/jquery.dataTables.min.js'%}"></script>
 <script src="{% static 'plugins/datatables/plugins/bootstrap/dataTables.bootstrap5.min.js'%}"></script>
-<script type="text/javascript" src="/static/js/form.js"></script>
 <script type="text/javascript">
-new DataTable('#example4');
-
-  $(function () {
-    busquedabi = function () {
-      var term = $("#searchinput").val().trim().toUpperCase();
-      let href = "{{ request.path }}?s=" + term;
-      location.href = href;
-    };
-    $("#searchinput").keyup(function (e) {
-      if (e.keyCode == 13) {
-        busquedabi();
-      }
+ $(document).ready(function() {
+    $('#example4').DataTable({
+        "language": {
+            "decimal": "",
+            "emptyTable": "No hay datos disponibles en la tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron registros coincidentes",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
     });
-  });
-
+});
   function formModal(id, text, action) {
     $.ajax({
       type: "GET",

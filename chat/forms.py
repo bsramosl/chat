@@ -108,6 +108,8 @@ class NotaForm(forms.Form):
 class MateriaForm(forms.Form):
     nombre = forms.CharField(label="Nombre", max_length=100, required=False,
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
+    curso = forms.ModelChoiceField(queryset=Curso.objects.all(), required=False, label="Curso",
+                                   widget=forms.Select(attrs={'class': 'form-control'}))
 
 
 def deshabilitar_campo(form, campo):
