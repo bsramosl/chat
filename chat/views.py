@@ -170,7 +170,7 @@ def procesar_respuesta_registro(message):
 def registro():
     global registro_en_proceso, nombre, apellido, fecha_nacimiento, cedula ,email
     registro_en_proceso = False
-    user = User.objects.create_user('admin',(nombre.split()[0] + apellido.split()[0]), email, 'password123',first_name=nombre,
+    user = User.objects.create_user((nombre.split()[0] + apellido.split()[0]), email, 'password123',first_name=nombre,
                                                     last_name=apellido)
     user.save()
     item = Persona(nombre=nombre,
