@@ -4,19 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="cambios en funciones para edicion general">
-      <change beforePath="$PROJECT_DIR$/chat/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/urls.py" afterDir="false" />
+    <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="QUITAR FILTROS">
+      <change afterPath="$PROJECT_DIR$/static/funciones.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/auth/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/auth/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chat/view/ajustes.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/ajustes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/alumno.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/alumno.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/curso.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/curso.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/cursos.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/cursos.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/materia.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/materia.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/matricula.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/matricula.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/nota.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/nota.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/padre.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/padre.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/profesor.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/profesor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/view/unidadeducativa.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/unidadeducativa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/ajustes/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/ajustes/view.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/padre/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/padre/view.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +29,7 @@
       <list>
         <option value="HTML File" />
         <option value="Python Script" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -167,7 +166,9 @@
       <workItem from="1717712967239" duration="14367000" />
       <workItem from="1717970334827" duration="15393000" />
       <workItem from="1718063327902" duration="6762000" />
-      <workItem from="1718145088724" duration="9760000" />
+      <workItem from="1718145088724" duration="11053000" />
+      <workItem from="1718231960353" duration="4508000" />
+      <workItem from="1718322597403" duration="693000" />
     </task>
     <task id="LOCAL-00001" summary="asd">
       <option name="closed" value="true" />
@@ -241,7 +242,15 @@
       <option name="project" value="LOCAL" />
       <updated>1718155957616</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="QUITAR FILTROS">
+      <option name="closed" value="true" />
+      <created>1718156376386</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1718156376386</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -267,7 +276,8 @@
     <MESSAGE value="cambios en chat" />
     <MESSAGE value="cambios en chatbot" />
     <MESSAGE value="cambios en funciones para edicion general" />
-    <option name="LAST_COMMIT_MESSAGE" value="cambios en funciones para edicion general" />
+    <MESSAGE value="QUITAR FILTROS" />
+    <option name="LAST_COMMIT_MESSAGE" value="QUITAR FILTROS" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -281,6 +291,11 @@
           <url>file://$PROJECT_DIR$/chat/view/padre.py</url>
           <line>62</line>
           <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/chat/auth/auth.py</url>
+          <line>91</line>
+          <option name="timeStamp" value="36" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

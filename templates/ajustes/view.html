@@ -15,89 +15,32 @@
 						<div class="col-md-6 col-sm-6">
 							<div class="card card-box">
 								<div class="card-head">
-									<header>Simple Form</header>
-									<button id="panel-button" class="mdl-button mdl-js-button mdl-button--icon pull-right" data-upgraded=",MaterialButton">
-										<i class="material-icons">more_vert</i>
-									</button>
-									<div class="mdl-menu__container is-upgraded"><div class="mdl-menu__outline mdl-menu--bottom-right"></div><ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events" data-mdl-for="panel-button" data-upgraded=",MaterialMenu,MaterialRipple">
-										<li class="mdl-menu__item mdl-js-ripple-effect" tabindex="-1" data-upgraded=",MaterialRipple"><i class="material-icons">assistant_photo</i>Action
-										<span class="mdl-menu__item-ripple-container"><span class="mdl-ripple"></span></span></li>
-										<li class="mdl-menu__item mdl-js-ripple-effect" tabindex="-1" data-upgraded=",MaterialRipple"><i class="material-icons">print</i>Another action
-										<span class="mdl-menu__item-ripple-container"><span class="mdl-ripple"></span></span></li>
-										<li class="mdl-menu__item mdl-js-ripple-effect" tabindex="-1" data-upgraded=",MaterialRipple"><i class="material-icons">favorite</i>Something else
-											here<span class="mdl-menu__item-ripple-container"><span class="mdl-ripple"></span></span></li>
-									</ul></div>
+									<header>Datos</header>
 								</div>
 								<div class="card-body " id="bar-parent">
-									<form>
-										<div class="form-group">
-											<label for="simpleFormEmail">Email address</label>
-											<input type="email" class="form-control" id="simpleFormEmail" placeholder="Enter email address">
-										</div>
-										<div class="form-group">
-											<label for="simpleFormPassword">Password</label>
-											<input type="password" class="form-control" id="simpleFormPassword" placeholder="Password">
-										</div>
-										<div class="form-group">
-											<div class="checkbox checkbox-icon-black">
-												<input id="rememberChk1" type="checkbox" checked="checked">
-												<label for="rememberChk1">
-													Remember me
-												</label>
-											</div>
-										</div>
-										<button type="submit" class="btn btn-primary">Submit</button>
-									</form>
+                                    <form method="POST" class="ajax-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="editardatos">
+                                        <input type="hidden" name="id" value="{{ id }}">
+                                        {{ form.as_p }}
+                                        <button type="submit" class="btn btn-success">guardar</button>
+                                    </form>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-6 col-sm-6">
 							<div class="card card-box">
 								<div class="card-head">
-									<header>Horizontal Form</header>
-									<button id="panel-button2" class="mdl-button mdl-js-button mdl-button--icon pull-right" data-upgraded=",MaterialButton">
-										<i class="material-icons">more_vert</i>
-									</button>
-									<div class="mdl-menu__container is-upgraded"><div class="mdl-menu__outline mdl-menu--bottom-right"></div><ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events" data-mdl-for="panel-button2" data-upgraded=",MaterialMenu,MaterialRipple">
-										<li class="mdl-menu__item mdl-js-ripple-effect" tabindex="-1" data-upgraded=",MaterialRipple"><i class="material-icons">assistant_photo</i>Action
-										<span class="mdl-menu__item-ripple-container"><span class="mdl-ripple"></span></span></li>
-										<li class="mdl-menu__item mdl-js-ripple-effect" tabindex="-1" data-upgraded=",MaterialRipple"><i class="material-icons">print</i>Another action
-										<span class="mdl-menu__item-ripple-container"><span class="mdl-ripple"></span></span></li>
-										<li class="mdl-menu__item mdl-js-ripple-effect" tabindex="-1" data-upgraded=",MaterialRipple"><i class="material-icons">favorite</i>Something else
-											here<span class="mdl-menu__item-ripple-container"><span class="mdl-ripple"></span></span></li>
-									</ul></div>
+									<header>Contraseña</header>
 								</div>
 								<div class="card-body " id="bar-parent1">
-									<form class="form-horizontal">
-										<div class="form-group row">
-											<label for="horizontalFormEmail" class="col-sm-2 control-label">Email</label>
-											<div class="col-sm-10">
-												<input type="email" class="form-control" id="horizontalFormEmail" placeholder="Email">
-											</div>
-										</div>
-										<div class="form-group row">
-											<label for="horizontalFormPassword" class="col-sm-2 control-label">Password</label>
-											<div class="col-sm-10">
-												<input type="password" class="form-control" id="horizontalFormPassword" placeholder="Password">
-											</div>
-										</div>
-										<div class="form-group row">
-											<div class="offset-sm-2 col-sm-10">
-												<div class="checkbox checkbox-icon-black">
-													<input id="rememberChk2" type="checkbox" checked="checked">
-													<label for="rememberChk2">
-														Remember me
-													</label>
-												</div>
-											</div>
-										</div>
-										<div class="form-group">
-											<div class="offset-md-3 col-md-9">
-												<button type="submit" class="btn btn-info m-r-20">Submit</button>
-												<button type="button" class="btn btn-default">Cancel</button>
-											</div>
-										</div>
-									</form>
+									 <form method="POST" class="ajax-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="editarcontraseña">
+                                        <input type="hidden" name="id" value="{{ id }}">
+                                        {{ password_form.as_p }}
+                                        <button type="submit" class="btn btn-success">Cambiar Contraseña</button>
+                                    </form>
 								</div>
 							</div>
 						</div>
@@ -109,6 +52,40 @@
 {% endblock %}
 
 {% block script %}
+
+    <script>
+    $(document).ready(function() {
+        $('.ajax-form').submit(function(event) {
+            event.preventDefault();
+            var $form = $(this); // Current form
+            var $errorContainer = $form.find('.ajax-error'); // Container for error messages
+
+            if ($errorContainer.length === 0) {
+                // If no error container exists, create one
+                $errorContainer = $('<div class="ajax-error alert alert-danger" style="display: none;"></div>');
+                $form.prepend($errorContainer);
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'ajustes' %}",
+                data: $form.serialize(),
+                success: function(response) {
+                    if (response.result === true) {
+                        alertaSuccess(response.mensaje);
+                    } else {
+                        $.unblockUI();
+                        alertaDanger(response.mensaje);
+                    }
+                },
+                error: function(xhr, status, error) {
+                   $.unblockUI();
+                   alertaDanger("Error de conexión.");
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock %}
 

@@ -24,6 +24,42 @@ def view(request):
     if request.method == 'POST':
         action = request.POST['action']
 
+        if action == 'editardatos':
+            try:
+                with transaction.atomic():
+                    vendedor = Persona.objects.get(usuario_id=usuario['id'])
+                    form = PersonaForm(request.POST)
+                    if form.is_valid():
+                        actualizar_instancia_con_form(vendedor,form)
+                        messages.success(request, 'Registro guardado con éxito.')
+                        res_json = {"result": True,"mensaje": "Datos Actualizados"}
+                        return JsonResponse(res_json, safe=False)
+                    else:
+                        res_json = {'result': False, "mensaje": "Error en el formulario: {}".format(
+                            [{k: v[0]} for k, v in form.errors.items()])}
+                        return JsonResponse(res_json, safe=False)
+            except Exception as ex:
+                transaction.set_rollback(True)
+                res_json = {'result': True, "mensaje": "Error: {}".format(ex)}
+            return JsonResponse(res_json, safe=False)
+
+        if action == 'editarcontraseña':
+
+            try:
+                user = User.objects.get(pk=usuario['id'])
+                password_form = CustomPasswordChangeForm(user=user, data=request.POST)
+                if password_form.is_valid():
+                    password_form.save()
+                    res_json = {'result': True, "mensaje": "Contraseña Cambiada con exito"}
+                    return JsonResponse(res_json, safe=False)
+                res_json = {'result': False, "mensaje": "Error en el formulario: {}".format(
+                    [{k: v[0]} for k, v in password_form.errors.items()])}
+                return JsonResponse(res_json, safe=False)
+            except Exception as ex:
+                transaction.set_rollback(True)
+                res_json = {'result': True, "mensaje": "Error: {}".format(ex)}
+            return JsonResponse(res_json, safe=False)
+
 
          
 
@@ -32,39 +68,19 @@ def view(request):
         if 'action' in request.GET:
             action = request.GET['action']
 
-            if action == 'agregar':
-                try:
-                    data['action'] = 'agregar'
-                    form = PadreForm()
-                    data['form'] = form
-                    template = get_template("padre/form.html")
-                    return JsonResponse({"result": True, 'data': template.render(data)})
-                except Exception as ex:
-                    pass
-
-            elif action == 'editar':
-                try:
-                    data['id'] = request.GET['id']
-                    data['action'] = 'editar'
-                    data['item'] = item = Padre.objects.get(pk=request.GET['id'])
-                    initial = model_to_dict(item)
-                    initial.update(model_to_dict(item.usuario))
-                    form = PadreForm(initial=initial)
-                    data['form'] = form
-                    template = get_template("padre/form.html")
-                    return JsonResponse({"result": True, 'data': template.render(data)})
-                except Exception as ex:
-                    pass
-
-            return HttpResponseRedirect(request.path)
 
         else:
             try:
-                request.session
                 data['title'] = 'Ajustes'
                 data['title1'] = 'Perfil'
-                eItems = User.objects.filter()
-                data['items'] = eItems
+                data['item'] = item = Persona.objects.get(usuario_id=usuario['id'])
+                initial = model_to_dict(item)
+                initial.update(model_to_dict(item.usuario))
+                form = PersonaForm(initial=initial)
+                form.quitar()
+                password_form = CustomPasswordChangeForm(user=item.usuario)
+                data['form'] = form
+                data['password_form'] = password_form
                 return render(request, "ajustes/view.html", data)
             except Exception as ex:
                 pass

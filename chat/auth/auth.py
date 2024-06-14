@@ -1,9 +1,13 @@
+from django.contrib import messages
 from django.db import transaction
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
+from django.forms import model_to_dict
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.template.loader import get_template
+
 from chat.funciones import *
 from chat.forms import *
 from django.contrib.auth.models import User, Group
@@ -15,6 +19,38 @@ def login_user(request):
     if request.method == 'POST':
         if 'action' in request.POST:
             action = request.POST['action']
+
+            if action == 'agregar':
+                try:
+                    form = PadreForm(request.POST)
+                    if form.is_valid():
+                        user = User.objects.create_user(
+                            (form.cleaned_data['nombre'].split()[0] + form.cleaned_data['apellidos'].split()[0]),
+                            form.cleaned_data['email'],
+                            form.cleaned_data['cedula'],
+                            first_name=form.cleaned_data['nombre'],
+                            last_name=form.cleaned_data['apellidos'])
+                        user.save()
+                        item = Persona(nombre=form.cleaned_data['nombre'],
+                                       apellidos=form.cleaned_data['apellidos'],
+                                       cedula=form.cleaned_data['cedula'],
+                                       nacimiento=form.cleaned_data['nacimiento'],
+                                       telefono=form.cleaned_data['telefono'],
+                                       email=form.cleaned_data['email'],
+                                       usuario=user,
+                                       tipo='Padre')
+                        item.save()
+                        messages.success(request, 'Registro guardado con éxito.')
+                        res_json = {"result": False}
+                        return redirect(request.META.get('HTTP_REFERER', ''))
+                    else:
+                        res_json = {'result': True, "mensaje": "Error en el formulario: {}".format(
+                            [{k: v[0]} for k, v in form.errors.items()])}
+                except Exception as ex:
+                    transaction.set_rollback(True)
+                    res_json = {'result': True, "mensaje": "Error: {}".format(ex)}
+                return JsonResponse(res_json, safe=False)
+
             if action == 'login':
                 try:
                     user = authenticate(username=request.POST['usuario'], password=request.POST['clave'])
@@ -47,6 +83,20 @@ def login_user(request):
         return HttpResponse(json.dumps({"result": "bad", "mensaje": "Solicitud Incorrecta."}),
                             content_type="application/json")
     else:
+        if 'action' in request.GET:
+            action = request.GET['action']
+
+            if action == 'registro':
+                try:
+                    data['action'] = 'agregar'
+                    form = PadreForm()
+                    form.registro()
+                    data['form'] = form
+                    template = get_template("padre/form.html")
+                    return JsonResponse({"result": True, 'data': template.render(data)})
+                except Exception as ex:
+                    pass
+
         if 'autenticado' in request.session:
             return HttpResponseRedirect("/")
         data['request'] = request

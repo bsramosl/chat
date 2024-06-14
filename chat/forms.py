@@ -1,8 +1,16 @@
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 from django.forms import DateTimeInput
 from datetime import datetime
 
 from .models import UnidadEducativa, Persona, Curso, Materia, Nota, Matricula
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(label='Contraseña antigua', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password1 = forms.CharField(label='Nueva contraseña', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    new_password2 = forms.CharField(label='Confirmar nueva contraseña', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
 
 class UnidadEducativaForm(forms.Form):
     nombre = forms.CharField(label="Nombre", max_length=100, required=False,
@@ -41,6 +49,13 @@ class PersonaForm(forms.Form):
 
     def quitar(self):
         del self.fields['tipo']
+
+
+    def registro(self):
+        del self.fields['sexo']
+        del self.fields['tipo']
+        del self.fields['unidad_educativa']
+        del self.fields['hijos']
 
 
 class AlumnoForm(PersonaForm):
