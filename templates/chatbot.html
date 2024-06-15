@@ -246,6 +246,12 @@ header h2 {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            if (data.message == "Sesión cerrada exitosamente") {
+            window.location.reload()
+             }
+            if (data.message == "logueado") {
+            window.location.reload()
+             }
             appendMessage(data.message, 'incoming');
         } else {
             appendMessage(data.error, 'error');

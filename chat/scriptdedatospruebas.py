@@ -70,7 +70,7 @@ for _ in range(300):
         persona = Persona(
             nombre=fake.first_name(),
             apellidos=fake.last_name(),
-            cedula=fake.ssn()[:10],
+            cedula=''.join([str(random.randint(0, 9)) for _ in range(10)]),
             nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
             sexo=random.choice(['1', '2']),
             telefono=fake.phone_number()[:10],

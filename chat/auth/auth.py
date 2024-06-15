@@ -22,7 +22,7 @@ def login_user(request):
 
             if action == 'agregar':
                 try:
-                    form = PadreForm(request.POST)
+                    form = PersonaForm(request.POST)
                     if form.is_valid():
                         user = User.objects.create_user(
                             (form.cleaned_data['nombre'].split()[0] + form.cleaned_data['apellidos'].split()[0]),
