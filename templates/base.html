@@ -5,9 +5,7 @@
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta content="width=device-width, initial-scale=1" name="viewport" />
-	<meta name="description" content="Responsive Admin Template" />
-	<meta name="author" content="SmartUniversity" />
-	<title>Smart University | Bootstrap Responsive Admin Template</title>
+	<title>Smart</title>
 	<!-- google font -->
 	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" />
 	<!-- icons -->
@@ -273,6 +271,7 @@
 									</div>
 								</div>
 							</li>
+                             {% if request.session.usuario.tipo == 'Administrador' %}
                             <li class="nav-item">
                                 <a href="#" class="nav-link nav-toggle"> <i data-feather="settings"></i>
 									<span class="title">Administrador</span> <span class="arrow"></span>
@@ -312,6 +311,7 @@
 									</li>
 								</ul>
 							</li>
+                             {% endif %}
                         {% if  request.session.usuario.tipo == 'Profesor' or request.session.usuario.tipo == 'Administrador' %}
                             <li class="nav-item">
                                     <a href="#" class="nav-link nav-toggle"> <i data-feather="book"></i>
@@ -327,15 +327,15 @@
                                     </ul>
                                 </li>
                         {% endif %}
-                        {% if  request.session.usuario.tipo == 'Alumno' or request.session.usuario.tipo == 'Administrador' %}
+                        {% if  request.session.usuario.tipo == 'Alumno'  %}
                             <li class="nav-item">
                                     <a href="#" class="nav-link nav-toggle"> <i data-feather="briefcase"></i>
                                         <span class="title">Materias</span> <span class="arrow"></span>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="nav-item">
-                                            <a href="all_department.html" class="nav-link "> <span class="title">All
-                                                    Departments</span>
+                                            <a href="/materias" class="nav-link "> <span class="title">
+                                                    Mis Materias</span>
                                             </a>
                                         </li>
                                     </ul>

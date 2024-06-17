@@ -3,7 +3,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from chat.views import *
-from chat.view import alumno, materia,curso, cursos, padre, matricula, nota, profesor, unidadeducativa, perfil, ajustes
+from chat.view import alumno, materia,curso, cursos, padre, matricula, nota, profesor,\
+    unidadeducativa, perfil, ajustes,materiaalumno
 from chat.auth import auth
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,9 +23,7 @@ urlpatterns = [
     path('ajustes', ajustes.view, name='ajustes'),
     path('perfil', perfil.view, name='perfil'),
     path('cursos', cursos.view, name='cursos'),
-
-
-
+    path('materias', materiaalumno.view, name='materias'),
 
 
 ]

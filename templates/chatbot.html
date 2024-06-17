@@ -58,7 +58,7 @@ body.show-chatbot .chatbot-toggler span:last-child {
 body.show-chatbot .chatbot {
   opacity: 1;
   pointer-events: auto;
-  transform: scale(0.93);
+  transform: scale(1);
 }
 .chatbot header {
   position: relative;
@@ -80,7 +80,7 @@ header h2 {
 }
 .chatbot .chatbox {
   overflow-y: auto;
-  height: 310px;
+  height: 345px;
   padding: 30px 20px 100px;
 }
 .chatbot :where(.chatbox, textarea)::-webkit-scrollbar {
@@ -201,7 +201,7 @@ header h2 {
       </header>
       <ul class="chatbox">
         <li class="chat incoming">
-          <span class="material-symbols-outlined">smart_toy</span>
+          <span class="material-symbols-outlined"><img src="static/img/chat.png" style="height: 30px; weight:30px;" ></span>
           <p>Hola👋<br>Como puedo ayudarte?</p>
         </li>
       </ul>
@@ -246,11 +246,14 @@ header h2 {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+            }
             if (data.message == "Sesión cerrada exitosamente") {
-            window.location.reload()
+                window.location.reload()
              }
             if (data.message == "logueado") {
-            window.location.reload()
+                window.location.reload()
              }
             appendMessage(data.message, 'incoming');
         } else {
@@ -263,7 +266,8 @@ header h2 {
     function appendMessage(text, type) {
         let chat = document.createElement("li");
         chat.classList.add("chat", type);
-        chat.innerHTML = `<p>${text}</p>`;
+        chat.innerHTML = `<span class="material-symbols-outlined"><img src="static/img/chat.png" style="height: 30px; weight:30px;" >
+                          </span><p>${text}</p>`;
         chatbox.appendChild(chat);
         chatbox.scrollTop = chatbox.scrollHeight;
     }
