@@ -202,7 +202,12 @@ header h2 {
       <ul class="chatbox">
         <li class="chat incoming">
           <span class="material-symbols-outlined"><img src="static/img/chat.png" style="height: 30px; weight:30px;" ></span>
-          <p>Hola👋<br>Como puedo ayudarte?</p>
+            {% if request.session.usuario %}
+                <p>Hola👋<br>Como puedo ayudarte?</p>
+            {% else %}
+                 <p>👋<br>Pra ayuda personalizada ingresa tu numero de cedula si no ingresa la pregunta</p>
+            {% endif %}
+
         </li>
       </ul>
       <div class="chat-input">

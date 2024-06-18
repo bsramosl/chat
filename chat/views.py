@@ -8,7 +8,7 @@ import json
 import logging
 import spacy
 from chat.auth import auth
-from chat.models import Persona, Nota, Curso
+from chat.models import Persona, Nota, Curso, Parentesco
 from django.middleware.csrf import get_token
 
 
@@ -20,8 +20,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 nlp = spacy.load('es_core_news_md')
 
-max_similarity = 0
-best_response = None
 usuario = None
 
 registro_en_proceso = False
@@ -36,6 +34,8 @@ apellido = ""
 fecha_nacimiento = ""
 cedula = ""
 email = ""
+personalisada = ""
+
 
 def Index(request):
     return render(request,'index.html')
@@ -65,10 +65,21 @@ def send_message(request):
 
 
 def generate_response(message,request):
-    global registro_en_proceso,login_en_proceso,max_similarity,best_response
+    global registro_en_proceso,login_en_proceso,personalisada
 
     message = message.lower()
     doc = nlp(message)
+
+    if not personalisada:
+        if not 'usuario' in request.session:
+            if len(message) == 10 and message.isdigit():
+                try:
+                    personalisada = Persona.objects.get(cedula=message)
+                    return f"En que puedo ayudarte \n{personalisada.nombre}"
+                except Exception as e:
+                    return "No existe persona registrada con el numero de cedula ingresado"
+
+
 
     if message == "salir" or message == "cancelar" or message == "exit":
         return procesar_salir()
@@ -85,10 +96,24 @@ def generate_response(message,request):
     if mis_materiasb:
         return procesar_respuesta_mis_materias(message)
 
+    if registrar_hijob:
+        return procesar_respuesta_registrarhijo(message)
+
     # Si no hay un proceso de registro en curso, procesar como de costumbre
     if not registro_en_proceso:
     
         responses = {
+            "login": iniciar_login,
+            "iniciar sesion": iniciar_login,
+            "logearse": iniciar_login,
+            "registro": iniciar_registro,
+            "logout": lambda: cerrar_sesion(request),
+            "cerrar sesion": lambda: cerrar_sesion(request),
+            "mis materias": mis_materias,
+            "cuales son las notas de mi hijo": notas_hijo,
+            "mis cursos": mis_cursos,
+            "perfil": perfil(request),
+            "ajustes": ajustes(request),
             "hola": "¡Hola! ¿Cómo puedo ayudarte hoy?",
             "adiós": "¡Adiós! Que tengas un buen día.",
             "cómo estás": "Estoy bien, gracias por preguntar. ¿Y tú?",
@@ -124,17 +149,7 @@ def generate_response(message,request):
             "cómo se manejan las ausencias": "Las ausencias deben justificarse a través de soporte. Se permiten un número limitado de ausencias justificadas por curso.",
             "hay tutorías disponibles": "Sí, ofrecemos tutorías personalizadas. Consulta con soporte para más detalles.",
             "cómo accedo a mi cuenta en línea": "Puedes acceder a tu cuenta en línea desde nuestra página web usando tu usuario y contraseña.",
-            "login": iniciar_login,
-            "iniciar sesion": iniciar_login,
-            "logearse": iniciar_login,
-            "registro": iniciar_registro,
-            "logout": lambda: cerrar_sesion(request),
-            "cerrar sesion": lambda: cerrar_sesion(request),
-            "mis materias":mis_materias,
-            "cuales son las notas de mi hijo": notas_hijo,
-            "mis cursos": mis_cursos,
-            "perfil": perfil(request),
-            "ajustes": ajustes(request),
+
 
 
 
@@ -153,6 +168,8 @@ def generate_response(message,request):
 
         }
 
+        best_response = None
+        max_similarity = 0
 
         # Procesar la similitud con las respuestas predefinidas
         for question, response in responses.items():
@@ -300,16 +317,23 @@ def procesar_respuesta_login(message, request):
     return "Por favor, proporciona la información solicitada."
 
 def cerrar_sesion(request):
+    global usuario
     try:
-        auth.logout_user(request)
-        return "Sesión cerrada exitosamente"
+        if usuario:
+            auth.logout_user(request)
+            return "Sesión cerrada exitosamente"
+        return "No esta logueado"
     except Exception as e:
         return f"Error al cerrar sesión: {str(e)}"
 
 def registrar_hijo():
-    global registrar_hijob
+    global registrar_hijob,personalisada,usuario
     registrar_hijob = True
-    return "Para iniciar con el registro ingresa su nombre:"
+    if personalisada:
+        return "Para comenzar el registro, por favor proporciona los nombres:"
+    if usuario:
+        return "Para comenzar el registro, por favor proporciona los nombres:"
+    return "Para iniciar con el registro debe de loguearse o ingresar su numero de cedula"
 
 def notas_hijo():
     global notas_hijob
@@ -317,18 +341,26 @@ def notas_hijo():
     return "Para conocer las notas de tu hijo ingresa su numero de cedula:"
 
 def mis_cursos():
-    global mis_cursosb
+    global mis_cursosb,personalisada,usuario
     mis_cursosb = True
+    if personalisada:
+        return procesar_respuesta_mis_cursosb(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_mis_cursosb(usuario['cedula'])
     return "Para conocer tus cursos ingresa tu numero de cedula:"
 
 def mis_materias():
-    global mis_materiasb
+    global mis_materiasb,personalisada,usuario
     mis_materiasb = True
+    if personalisada:
+        return procesar_respuesta_mis_materias(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_mis_materias(usuario['cedula'])
     return "Para conocer tus materias ingresa tu numero de cedula:"
 
 def procesar_respuesta_mis_materias(message):
     global mis_materiasb,cedula
-    if not cedula:
+    if message:
         if len(message) == 10 and message.isdigit():
             cedula = message
             try:
@@ -374,21 +406,25 @@ def procesar_respuesta_notas_hijo(message):
 
 def procesar_respuesta_mis_cursosb(message):
     global mis_cursosb,cedula
-    if not cedula:
+    if message:
         if len(message) == 10 and message.isdigit():
             cedula = message
             try:
                 persona = Persona.objects.get(cedula=cedula)
                 if persona.tipo == "Profesor":
                     curso = Curso.objects.filter(profesor=persona)
-                if curso:
-                    cursos = '\n'.join(f"- {curso.nombre}" for curso in curso)
-                    procesar_salir()
-                    return f"Sus cursos son:\n{cursos}"
-                    cedula = ""
+                    if curso:
+                        cursos = '\n'.join(f"- {curso.nombre}" for curso in curso)
+                        procesar_salir()
+                        return f"Sus cursos son:\n{cursos}"
+                        cedula = ""
+                    else:
+                        cedula = ""
+                        procesar_salir()
+                        return "No tiene cursos registrad0s."
                 else:
-                    cedula = ""
-                    return "No tiene cursos registrad0s."
+                    procesar_salir()
+                    return "Usted no es docente"
             except Persona.DoesNotExist:
                 return "No se encontró un docente con la cédula proporcionada."
         else:
@@ -397,9 +433,78 @@ def procesar_respuesta_mis_cursosb(message):
 
     return "Por favor, proporciona la información solicitada."
 
+def procesar_respuesta_registrarhijo(message):
+    global registro_en_proceso, nombre, apellido, fecha_nacimiento, cedula, email
+    doc = nlp(message)
+    if not nombre:
+        for ent in doc.ents:
+            if ent.label_ == 'PER':
+                nombre = ent.text
+                return "Proporciona el apellido:"
+        return "No pude el nombre. Por favor, proporciona el nombre."
+    if not apellido:
+        for ent in doc.ents:
+            if ent.label_ == 'PER':
+                apellido = ent.text
+                return "Proporciona la fecha de nacimiento (AAAA-MM-DD):"
+        return "No pude reconocer el apellido. Por favor, proporciona el apellido."
+
+    if not fecha_nacimiento:
+        try:
+            fecha = parse_date(message)
+            fecha_nacimiento = fecha
+            return "Proporciona el correo electrónico:"
+        except ValueError:
+            return "Formato de fecha incorrecto. Proporciona la fecha de nacimiento en el formato AAAA-MM-DD."
+
+    if not email:
+        if "@" in message and "." in message:
+            email = message
+            return "Proporciona el número de cédula:"
+        else:
+            return "Correo electrónico inválido. Proporciona un correo electrónico válido."
+
+    if not cedula:
+        if len(message) == 10 and message.isdigit():
+            cedula = message
+            return registrohijo()
+        else:
+            return "Número de cédula incorrecto. Proporciona un número de cédula de 10 dígitos."
+    return "Por favor, proporciona la información solicitada."
+
+def registrohijo():
+    global registro_en_proceso, nombre, apellido, fecha_nacimiento, cedula, email,registrar_hijob, personalisada, usuario
+    if personalisada:
+        padre = Persona.objects.get(cedula=personalisada.cedula)
+    if usuario:
+        padre = Persona.objects.get(cedula=usuario['cedula'])
+        return "Para comenzar el registro, por favor proporciona los nombres:"
+    user = User.objects.create_user((nombre.split()[0] + apellido.split()[0]), email, 'password123', first_name=nombre,
+                                    last_name=apellido)
+    user.save()
+    hijo = Persona(nombre=nombre,
+                   apellidos=apellido,
+                   cedula=cedula,
+                   nacimiento=fecha_nacimiento,
+                   email=email,
+                   usuario=user,
+                   tipo='Alumno')
+
+    hijo.save()
+
+    parentesco = Parentesco(padre=padre, hijo=hijo)
+    parentesco.save()
+
+    mensaje_confirmacion = (f"Los datos de tu hijo han sido registrados:\n"
+                            f"Nombre: {nombre}\n"
+                            f"Apellido: {apellido}\n"
+                            f"Fecha de nacimiento: {fecha_nacimiento}\n"
+                            f"Cédula: {cedula}")
+    procesar_salir()
+    return mensaje_confirmacion
 
 def procesar_salir():
-    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob
+    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False

@@ -68,6 +68,7 @@ def login_user(request):
                             }
                             per = Persona.objects.get(usuario=user)
                             usuario_data['tipo'] = per.tipo
+                            usuario_data['cedula'] = per.cedula
                             request.session['usuario'] = usuario_data
 
                             return HttpResponse(json.dumps({"result": "ok","sessionid": request.session.session_key}), content_type="application/json")
