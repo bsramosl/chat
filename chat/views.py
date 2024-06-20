@@ -65,24 +65,12 @@ def generate_response(message,request):
 
     message = message.lower()
     doc = nlp(message)
-
-    if not personalisada:
-        if not 'usuario' in request.session:
-            if len(message) == 10 and message.isdigit():
-                try:
-                    personalisada = Persona.objects.get(cedula=message)
-                    return f"En que puedo ayudarte \n{personalisada.nombre}"
-                except Exception as e:
-                    return "No existe persona registrada con el numero de cedula ingresado"
-
-
-
+ 
     if message == "cancelar" or message == "exit":
         return procesar_salir()
 
     if message == "salir" :
         return procesarpersonalizada()
-
 
     if login_en_proceso:
         return procesar_respuesta_login(message, request)
@@ -101,6 +89,18 @@ def generate_response(message,request):
 
     if cambio_contrasena_en_proceso:
         return procesar_respuesta_cambio_contrasena(message, request)
+
+    if registro_en_proceso:
+        return procesar_respuesta_registro(message)
+
+    if not personalisada:
+        if not 'usuario' in request.session:
+            if len(message) == 10 and message.isdigit():
+                try:
+                    personalisada = Persona.objects.get(cedula=message)
+                    return f"En que puedo ayudarte \n{personalisada.nombre}"
+                except Exception as e:
+                    return "No existe persona registrada con el numero de cedula ingresado"
 
     # Si no hay un proceso de registro en curso, procesar como de costumbre
     if not registro_en_proceso:
