@@ -130,6 +130,25 @@ def panel(request):
             try:
                 data['titulo'] = 'Menú Principal'
                 data['usuario'] = usuario = request.session['usuario']
+                per =Persona.objects.get(usuario_id=usuario['id'])
+                if usuario['tipo'] == "Administrador":
+                    data['alumno'] = Persona.objects.filter(tipo="Alumno").count()
+                    data['profesor'] = Persona.objects.filter(tipo="Profesor").count()
+                    data['curso'] = Curso.objects.all().distinct().count()
+                    data['materia'] = Materia.objects.all().distinct().count()
+                    data['notas'] = Nota.objects.all().select_related('materia').distinct('materia')
+                if usuario['tipo'] == "Profesor":
+                    data['alumno'] = Persona.objects.filter(tipo="Alumno").count()
+                    data['profesor'] = Persona.objects.filter(tipo="Profesor").count()
+                    data['curso'] = Curso.objects.filter(profesor=per).distinct().count() if Curso.objects.filter(profesor=per).distinct().count() is not None else 0
+                    data['materia'] = Materia.objects.filter(curso__profesor=per).distinct().count() if Materia.objects.filter(curso__profesor=per).distinct().count() is not None else 0
+                    data['notas'] = Nota.objects.filter(materia__curso__profesor=per).select_related('materia').distinct('materia') if Nota.objects.filter(materia__curso__profesor=per).select_related('materia').distinct() is not None else None
+                if usuario['tipo'] == "Alumno":
+                    data['alumno'] = Persona.objects.filter(tipo="Alumno").count()
+                    data['profesor'] = Persona.objects.filter(tipo="Profesor").count()
+                    data['curso'] = Nota.objects.filter(alumno=per).distinct('materia__curso').count() if Nota.objects.filter(alumno=per).distinct('materia__curso').count() is not None else 0
+                    data['materia'] = Nota.objects.filter(alumno=per).distinct('materia').count() if Nota.objects.filter(alumno=per).distinct('materia').count() is not None else 0
+                    data['notas'] = Nota.objects.filter(alumno=per).select_related('materia').distinct('materia') if Nota.objects.filter(alumno=per).select_related('materia').distinct() is not None else None
                 return render(request, "index.html", data)
             except Exception as ex:
                 return HttpResponseRedirect('/logout')

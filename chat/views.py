@@ -11,11 +11,6 @@ from chat.auth import auth
 from chat.models import Persona, Nota, Curso, Parentesco
 from django.middleware.csrf import get_token
 
-
-# Cargar el modelo de spaCy para español
-nlp = spacy.load('es_core_news_md')
-
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 nlp = spacy.load('es_core_news_md')
@@ -28,6 +23,7 @@ mis_materiasb = False
 mis_cursosb = False
 registrar_hijob = False
 notas_hijob = False
+cambio_contrasena_en_proceso = False
 
 nombre = ""
 apellido = ""
@@ -81,8 +77,12 @@ def generate_response(message,request):
 
 
 
-    if message == "salir" or message == "cancelar" or message == "exit":
+    if message == "cancelar" or message == "exit":
         return procesar_salir()
+
+    if message == "salir" :
+        return procesarpersonalizada()
+
 
     if login_en_proceso:
         return procesar_respuesta_login(message, request)
@@ -99,6 +99,9 @@ def generate_response(message,request):
     if registrar_hijob:
         return procesar_respuesta_registrarhijo(message)
 
+    if cambio_contrasena_en_proceso:
+        return procesar_respuesta_cambio_contrasena(message, request)
+
     # Si no hay un proceso de registro en curso, procesar como de costumbre
     if not registro_en_proceso:
     
@@ -114,6 +117,8 @@ def generate_response(message,request):
             "mis cursos": mis_cursos,
             "perfil": perfil(request),
             "ajustes": ajustes(request),
+            "cambio de contraseña": iniciar_cambio_contrasena,
+
             "hola": "¡Hola! ¿Cómo puedo ayudarte hoy?",
             "adiós": "¡Adiós! Que tengas un buen día.",
             "cómo estás": "Estoy bien, gracias por preguntar. ¿Y tú?",
@@ -122,7 +127,7 @@ def generate_response(message,request):
             "gracias": "De nada. ¿Hay algo más en lo que pueda ayudarte?",
             "cómo me puedo registrar": "Para registrarte, puedes iniciar el proceso escribiendo 'registro'.",
             "cuáles son los requisitos": "Los requisitos para registrarse incluyen nombre completo, fecha de nacimiento, correo electrónico y número de cédula.",
-            "cómo registro a mi hijo": "Para registrar a tu hijo, por favor proporciona los detalles de su nombre, fecha de nacimiento y número de identificación.",
+            "cómo registro a mi hijo": "Para registrar a tu hijo, por favor proporciona los detalles de su nombre,apellido, fecha de nacimiento, número de identificación y correo.",
             "qué cursos hay": "Actualmente ofrecemos una variedad de cursos. Por favor visita nuestra página web para más detalles.",
             "cuánto cuesta el registro": "El costo del registro varía dependiendo del curso. Por favor, visita nuestra página de tarifas para más detalles.",
             "cuál es su horario de atención": "Nuestro horario de atención es de lunes a viernes, de 9:00 AM a 6:00 PM.",
@@ -150,12 +155,6 @@ def generate_response(message,request):
             "hay tutorías disponibles": "Sí, ofrecemos tutorías personalizadas. Consulta con soporte para más detalles.",
             "cómo accedo a mi cuenta en línea": "Puedes acceder a tu cuenta en línea desde nuestra página web usando tu usuario y contraseña.",
 
-
-
-
-
-
-
             "registrar hijo": registrar_hijo,
 
             "inscripción a cursos": "Para inscribirte a cursos, dirígete a la sección de 'Cursos Disponibles' en tu cuenta y selecciona los cursos en los que deseas inscribirte.",
@@ -165,6 +164,22 @@ def generate_response(message,request):
             "cursos del docente": "Los cursos que dicta el docente pueden ser vistos en la sección 'Cursos' al iniciar sesión.",
             "cursos del alumno": "Los cursos en los que está inscrito el alumno pueden ser consultados en la sección 'Materias' después de iniciar sesión en tu cuenta.",
             "información del alumno": "La información detallada del alumno está disponible en la sección 'Perfil' una vez que hayas iniciado sesión.",
+            # Nuevas respuestas agregadas
+            "cómo funciona el proceso de inscripción": "El proceso de inscripción incluye completar el formulario en línea.",
+            "dónde puedo encontrar el formulario de inscripción": "El formulario de inscripción está disponible en la sección de 'Registro' de nuestra página web.",
+            "necesito ayuda con el formulario de inscripción": "Para recibir ayuda con el formulario de inscripción, puedes contactar con soporte a través de correo o teléfono.",
+            "cuál es el proceso de matriculación": "El proceso de matriculación incluye la verificación de documentos, la asignación de cursos.",
+            "cómo puedo verificar el estado de mi inscripción": "Puedes verificar el estado de tu inscripción iniciando sesión en tu cuenta y yendo a la sección de mis materias.",
+            "qué hacer si tengo problemas con la inscripción en línea": "Si tienes problemas con la inscripción en línea, por favor contacta con soporte para recibir asistencia.",
+            "cómo actualizo mis datos personales": "Puedes actualizar tus datos personales iniciando sesión en tu cuenta y accediendo a la sección de 'Perfil'.",
+            "qué debo hacer si olvidé mi contraseña": "Si olvidaste tu contraseña, puedes restablecerla utilizando la opción 'Olvidé mi contraseña' en la página de inicio de sesión.",
+            "hay penalizaciones por cancelar mi inscripción": "Las penalizaciones por cancelar tu inscripción dependen de la política de cancelación del curso. Por favor, revisa los términos o contacta con soporte.",
+            "cómo solicito un reembolso": "Para solicitar un reembolso, por favor contacta con soporte y proporciona los detalles de tu inscripción y la razón de la solicitud.",
+            "cómo inscribo a más de un hijo": "Para inscribir a más de un hijo, completa el formulario de inscripción por separado para cada uno y sigue el proceso de pago correspondiente.",
+            "hay programas de orientación para nuevos estudiantes": "Sí, ofrecemos programas de orientación para nuevos estudiantes para ayudarles a adaptarse a nuestra institución.",
+            "cómo obtengo ayuda financiera para la inscripción": "Para obtener ayuda financiera, puedes aplicar a nuestras becas o planes de financiamiento. Contacta con soporte para más detalles.",
+            "hay plazos para la inscripción": "Sí, existen plazos específicos para la inscripción. Por favor, consulta nuestra página web o contacta con soporte para más información."
+
 
         }
 
@@ -321,6 +336,7 @@ def cerrar_sesion(request):
     try:
         if usuario:
             auth.logout_user(request)
+            usuario = None
             return "Sesión cerrada exitosamente"
         return "No esta logueado"
     except Exception as e:
@@ -338,6 +354,8 @@ def registrar_hijo():
 def notas_hijo():
     global notas_hijob
     notas_hijob = True
+    if usuario:
+        return procesar_respuesta_notas_hijo(usuario['cedula'])
     return "Para conocer las notas de tu hijo ingresa su numero de cedula:"
 
 def mis_cursos():
@@ -365,10 +383,15 @@ def procesar_respuesta_mis_materias(message):
             cedula = message
             try:
                 persona = Persona.objects.get(cedula=cedula)
-                materias = Nota.objects.filter(alumno=persona).values_list('materia__nombre', flat=True).distinct()
+                if persona.tipo == 'Profesor':
+                    materias = Nota.objects.filter(materia__curso__profesor=persona).values_list('materia__nombre', flat=True).distinct('materia')
+                else:
+                    materias = Nota.objects.filter(alumno=persona).values_list('materia__nombre', flat=True).distinct()
                 if materias:
                     procesar_salir()
                     materias_lista = '\n'.join(f"- {materia}" for materia in materias)
+                    if persona.tipo == 'Profesor':
+                        return f"Tus Materias son:\n{materias_lista}"
                     return f"Las materias del alumno con cédula {cedula} son:\n{materias_lista}"
                     cedula = ""
                 else:
@@ -382,7 +405,12 @@ def procesar_respuesta_mis_materias(message):
     return "Por favor, proporciona la información solicitada."
 
 def procesar_respuesta_notas_hijo(message):
-    global notas_hijob, cedula
+    global notas_hijob, cedula,usuario
+    if usuario:
+        parentesco = Parentesco.objects.filter(padre__cedula=message).first()
+        message = parentesco.hijo.cedula if parentesco is not None else None
+        if not message:
+            return "No tiene hijos registrados."
     if not cedula:
         if len(message) == 10 and message.isdigit():
             cedula = message
@@ -504,14 +532,33 @@ def registrohijo():
     return mensaje_confirmacion
 
 def procesar_salir():
-    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada
+    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
     mis_cursosb = False
     registrar_hijob = False
     notas_hijob = False
+    cambio_contrasena_en_proceso = False
     return "Hola👋 Como puedo ayudarte?"
+
+def procesarpersonalizada():
+    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    registro_en_proceso = False
+    login_en_proceso = False
+    mis_materiasb = False
+    mis_cursosb = False
+    registrar_hijob = False
+    notas_hijob = False
+    personalisada = ""
+    cambio_contrasena_en_proceso = False
+    return "Hola👋 Como puedo ayudarte?"
+
+def procesar_salir_cambio_contrasena(request):
+    del request.session['username_cambio']
+    del request.session['password_actual']
+    del request.session['password_nueva']
+    procesar_salir()
 
 
 def perfil(request):
@@ -525,3 +572,42 @@ def ajustes(request):
     if usuario:
         return "ajustes"
     return "No estas logeado?"
+
+
+def iniciar_cambio_contrasena():
+    global cambio_contrasena_en_proceso
+    cambio_contrasena_en_proceso = True
+    return "Por favor, proporciona tu nombre de usuario para cambiar la contraseña:"
+
+def procesar_respuesta_cambio_contrasena(message, request):
+    global cambio_contrasena_en_proceso
+
+    if 'username_cambio' not in request.session:
+        request.session['username_cambio'] = message
+        return "Por favor, proporciona tu contraseña actual:"
+
+    if 'password_actual' not in request.session:
+        request.session['password_actual'] = message
+        return "Por favor, proporciona tu nueva contraseña:"
+
+    if 'password_nueva' not in request.session:
+        request.session['password_nueva'] = message
+        username = request.session['username_cambio']
+        password_actual = request.session['password_actual']
+        password_nueva = request.session['password_nueva']
+
+        try:
+            user = auth.authenticate(username=username, password=password_actual)
+            if user is not None:
+                user.set_password(password_nueva)
+                user.save()
+                procesar_salir_cambio_contrasena(request)
+                return "Contraseña cambiada exitosamente"
+            else:
+                procesar_salir_cambio_contrasena(request)
+                return "Error: Contraseña actual incorrecta"
+        except Exception as e:
+            procesar_salir_cambio_contrasena(request)
+            return f"Error en el cambio de contraseña: {str(e)}"
+
+    return "Por favor, proporciona la información solicitada."

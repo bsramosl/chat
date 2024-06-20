@@ -4,6 +4,14 @@
 
 {% block cabecera %}
 
+
+<link
+  href="{% static 'plugins/datatables/plugins/bootstrap/dataTables.bootstrap5.min.css'%}"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+
 {% endblock %}
 
 {% block titulo %}
@@ -11,11 +19,153 @@
 {% endblock %}
 
 {% block content %}
+<!-- start widget -->
+    <div class="state-overview">
+						<div class="row">
+                              {% if request.session.usuario.tipo == "Administrador" %}
+							<div class="col-xl-3 col-md-6 col-12">
+								<div class="info-box bg-b-green">
+									<span class="info-box-icon push-bottom"><i data-feather="users"></i></span>
+									<div class="info-box-content">
+										<span class="info-box-text">Alumnos</span>
+										<span class="info-box-number">{{ alumno }}</span>
+									</div>
+									<!-- /.info-box-content -->
+								</div>
+								<!-- /.info-box -->
+							</div>
+							<!-- /.col -->
+							<div class="col-xl-3 col-md-6 col-12">
+								<div class="info-box bg-b-yellow">
+									<span class="info-box-icon push-bottom"><i data-feather="user"></i></span>
+									<div class="info-box-content">
+										<span class="info-box-text">Docentes</span>
+										<span class="info-box-number">{{ profesor }}</span>
+									</div>
+									<!-- /.info-box-content -->
+								</div>
+								<!-- /.info-box -->
+							</div>
+                            {% endif %}
+							<!-- /.col -->
+							<div class="col-xl-3 col-md-6 col-12">
+								<div class="info-box bg-b-blue">
+									<span class="info-box-icon push-bottom"><i data-feather="book"></i></span>
+									<div class="info-box-content">
+										<span class="info-box-text">Cursos</span>
+										<span class="info-box-number">{{ curso }}</span>
+									</div>
+									<!-- /.info-box-content -->
+								</div>
+								<!-- /.info-box -->
+							</div>
+							<!-- /.col -->
+							<div class="col-xl-3 col-md-6 col-12">
+								<div class="info-box bg-b-pink">
+									<span class="info-box-icon push-bottom"><i
+											class="material-icons">monetization_on</i></span>
+									<div class="info-box-content">
+										<span class="info-box-text">Materias</span>
+										<span class="info-box-number">{{ materia }}</span><span></span>
+									</div>
+									<!-- /.info-box-content -->
+								</div>
+								<!-- /.info-box -->
+							</div>
+							<!-- /.col -->
+						</div>
+					</div>
 
+    <div class="row">
+						<div class="col-lg-9 col-md-12 col-sm-12 col-12">
+							<div class="card-box">
+								<div class="card-head">
+									<header>Curso</header>
+								</div>
+								<div class="card-body ">
+									<div class="table-responsive">
+										<table class="table table-hover dashboard-task-infos" id="example4">
+											<thead>
+												<tr>
+													<th>Profesor</th>
+													<th>Curso</th>
+													<th>Materia</th>
+												</tr>
+											</thead>
+											<tbody>
+                                            {% for nota in notas %}
+												<tr>
+                                                <td>{{ nota.materia.curso.profesor }}</td>
+                                                <td>{{ nota.materia.curso }}</td>
+                                                <td>{{ nota.materia }}</td>
+                                                </tr>
+											{% endfor %}
 
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3 col-sm-12 col-12">
+							<div class="card">
+								<div class="card-body">
+									<div class="box-title"><small class="pull-right small-lbl-green"><i
+												class="far fa-arrow-alt-circle-up"></i> Good</small> Student Performance
+									</div>
+									<div class="mt-3">
+										<div class="stat-item">
+											<div class="h6">Overall Growth</div> <b>35.80%</b>
+										</div>
+										<div class="stat-item">
+											<div class="h6">Montly</div> <b>45.20%</b>
+										</div>
+										<div class="stat-item">
+											<div class="h6">Day</div> <b>5.50%</b>
+										</div>
+									</div>
+									<div id="schart1">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'plugins/datatables/jquery.dataTables.min.js'%}"></script>
+<script src="{% static 'plugins/datatables/plugins/bootstrap/dataTables.bootstrap5.min.js'%}"></script>
+    <script type="text/javascript">
+$(document).ready(function() {
+    $('#example4').DataTable({
+        "language": {
+            "decimal": "",
+            "emptyTable": "No hay datos disponibles en la tabla",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+            "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+            "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron registros coincidentes",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
+        }
+    });
+});
+
+</script>
 
 {% endblock %}

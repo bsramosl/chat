@@ -24,8 +24,6 @@ urlpatterns = [
     path('perfil', perfil.view, name='perfil'),
     path('cursos', cursos.view, name='cursos'),
     path('materias', materiaalumno.view, name='materias'),
-
-
 ]
 
 if settings.DEBUG:

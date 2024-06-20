@@ -27,7 +27,7 @@ admin_user = User.objects.create_superuser('admin', 'admin@example.com', 'passwo
 persona = Persona(
             nombre='admin',
             apellidos='admin',
-            cedula=fake.ssn()[:10],
+            cedula=f''.join([str(random.randint(0, 9)) for _ in range(10)]),
             nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
             sexo=random.choice(['1', '2']),
             telefono=fake.phone_number()[:10],
