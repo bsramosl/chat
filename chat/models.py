@@ -20,6 +20,7 @@ class Persona(models.Model):
         ('alumno', 'Alumno'),
         ('padre', 'Padre'),
         ('profesor', 'Profesor'),
+        ('administrador', 'Administrador'),
     )
 
     nombre = models.CharField(max_length=100, null=True, blank=True)
@@ -29,7 +30,7 @@ class Persona(models.Model):
     sexo = models.CharField(max_length=1, null=True, blank=True)
     telefono = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(default='', max_length=200, verbose_name="Correo electrónico personal")
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     unidad_educativa = models.ForeignKey(UnidadEducativa, on_delete=models.CASCADE, null=True, blank=True)
     tipo = models.CharField(max_length=18, choices=TIPOS_PERSONA)
 

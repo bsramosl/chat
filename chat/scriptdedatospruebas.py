@@ -3,6 +3,8 @@ import random
 
 import django
 from faker import Faker
+fake = Faker('es_ES')
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat.settings')
 # Configura las configuraciones de Django y llama a django.setup()
@@ -12,7 +14,7 @@ from django.contrib.auth.models import User
 from chat.models import UnidadEducativa, Persona, Parentesco, Curso, Materia, Matricula, Nota
 usuarios_creados = set()
 unidades_educativas_creadas = set()
-fake = Faker()
+
 
 UnidadEducativa.objects.all().delete()
 Persona.objects.all().delete()

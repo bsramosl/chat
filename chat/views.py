@@ -10,6 +10,9 @@ import spacy
 from chat.auth import auth
 from chat.models import Persona, Nota, Curso, Parentesco
 from django.middleware.csrf import get_token
+from twilio.twiml.messaging_response import MessagingResponse
+from twilio.rest import Client
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,6 +35,21 @@ cedula = ""
 email = ""
 personalisada = ""
 
+
+
+@csrf_exempt
+def twilio_webhook(request):
+    if request.method == 'POST':
+        message_body = request.POST.get('Body', '')
+        from_number = request.POST.get('From', '')
+        print(request.POST)
+
+        response_text = generate_response(message_body,request)  # Tu función para generar la respuesta
+
+        resp = MessagingResponse()
+        resp.message(response_text)
+        return HttpResponse(str(resp), content_type='text/xml')
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def Index(request):
     return render(request,'index.html')

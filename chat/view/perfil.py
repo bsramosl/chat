@@ -37,16 +37,18 @@ def view(request):
         else:
             try:
                 data['title'] = 'Perfil'
-                usuario = request.session['usuario']
-                user = Persona.objects.get(usuario_id=usuario['id'])
-                hijos = Parentesco.objects.filter(padre=user)
-                data['user'] = user
+                data['persona'] = persona = Persona.objects.get(pk=usuario['id_per'])
+                hijos = Parentesco.objects.filter(padre=persona)
                 data['hijosc'] = hijos.count()
-                data['hijos'] = Persona.objects.filter(pk__in=hijos.values_list('hijo', flat=True))
+                if hijos.count():
+                    data['hijos'] = Persona.objects.filter(pk__in=hijos.values_list('hijo', flat=True))
                 if usuario['tipo'] == 'Alumno':
-                    data['cursos'] = Matricula.objects.filter(alumno=user)
+                    data['cursos'] = Matricula.objects.filter(alumno=persona)
                 elif usuario['tipo'] == 'Profesor' :
-                    data['cursos'] = Curso.objects.filter(profesor=user)
+                    data['cursos'] = Curso.objects.filter(profesor=persona)
+                elif usuario['tipo'] == 'Administrador':
+                    data['tipos'] = Persona.objects.values('tipo').annotate(total=Count('tipo'))
+
                 return render(request, "perfil/view.html", data)
             except Exception as ex:
                 pass

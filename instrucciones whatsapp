@@ -1,0 +1,33 @@
+
+
+instalar en el terminal
+
+para poder enviar y recivir datos de whatsapp primero ejecutar el proyecto en el terminal luego ejecutar ngrok http 8000 en
+otro terminal despues de instalarlo tienen que estar las dos ejecuciones al mismo tiempo
+
+
+
+ejecutar en el teminal --->>>>>            pip install django twilio pyngrok
+ejecutar en el teminal --->>>>>>>>>>>>>    ngrok config add-authtoken 2hLmdQNui3ugz1QQz24PrTj4Pts_87z6CGaeJmh3F7B1McwHt
+
+ejecutar para inicial el tunel---------->>>ngrok http 8000
+
+
+para poder usar el whatsap hay que tener cuenta en .twilio.com
+
+en el apartado de messaging-->>try it out -->>>sandbox setting
+
+en el method post poner----->
+el Forwarding  que sale al ejecutar el ngrok  ejemplo--->  https://bef3-179-51-142-49.ngrok-free.app
+
+
+con eso al final agregar---->/twilio_webhook   y todo junto poner en --->>>When a message comes in de la conf del twilio
+
+
+
+ejemplo --->>>  https://bef3-179-51-142-49.ngrok-free.app/twilio_webhook
+
+
+
+
+y en settings configurar TWILIO_   con los datos de su cuenta

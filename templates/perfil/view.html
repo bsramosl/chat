@@ -18,21 +18,21 @@
 								<div class="card">
 									<div class="card-body no-padding height-9">
 										<div class="profile-usertitle">
-											<div class="profile-usertitle-name">{{ user.nombre }} {{ user.apellidos }}</div>
-											<div class="profile-usertitle-job"> {{ user.tipo }} </div>
+											<div class="profile-usertitle-name">{{ persona.nombre }} {{ persona.apellidos }}</div>
+											<div class="profile-usertitle-job"> {{ persona.tipo }} </div>
 										</div>
 										<ul class="list-group list-group-unbordered">
                                             <li class="list-group-item">
-												<b>Usuario: </b> <a class="pull-right">{{ user.usuario }}</a>
+												<b>Usuario: </b> <a class="pull-right">{{ persona.usuario }}</a>
 											</li>
 											<li class="list-group-item">
-												<b>Cedula: </b> <a class="pull-right">{{ user.cedula }}</a>
+												<b>Cedula: </b> <a class="pull-right">{{ persona.cedula }}</a>
 											</li>
 											<li class="list-group-item">
-												<b>Telefono: </b> <a class="pull-right">{{ user.telefono }}</a>
+												<b>Telefono: </b> <a class="pull-right">{{ persona.telefono }}</a>
 											</li>
 											<li class="list-group-item">
-												<b>Email: </b> <a class="pull-right">{{ user.email }}</a>
+												<b>Email: </b> <a class="pull-right">{{ persona.email }}</a>
 											</li>
                                             <li class="list-group-item">
 												<b>Hijos: </b> <a class="pull-right">{{ hijosc }}</a>
@@ -53,7 +53,7 @@
 											<div class="card-body no-padding height-9">
 												<div class="container-fluid">
 													<div class="row">
-                                                    {% if user.tipo == 'Padre' %}
+                                                    {% if usuario.tipo == 'Padre' %}
                                                         {% for hijo in hijos %}
                                                             <div class="col-md-5">
                                                                 <div class="prog-avatar">
@@ -70,7 +70,7 @@
                                                             </div>
                                                         {% endfor %}
                                                     {% endif %}
-                                                    {% if user.tipo == 'Alumno' %}
+                                                    {% if usuario.tipo == 'Alumno' %}
                                                         {% for curso in cursos %}
                                                             <div class="col-lg-3 col-md-6 col-12 col-sm-6">
                                                                 <div class="blogThumb">
@@ -85,13 +85,24 @@
                                                             </div>
                                                         {% endfor %}
                                                     {% endif %}
+                                                    {% if usuario.tipo == 'Administrador' %}
+                                                        {% for tipo in tipos %}
+
+                                                            <div class="col-lg-5 col-md-6 col-sm-6 col-12">
+                                                                    <div class="analysis-box m-b-0 bg-purple">
+                                                                        <h3 class="text-white box-title">{{ tipo.tipo }}<span class="pull-right"><i class="fa fa-caret-up"></i> {{ tipo.total }}</span></h3>
+                                                                     </div>
+                                                                </div>
+                                                        {% endfor %}
+
+                                                    {% endif %}
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<!-- END PROFILE CONTENT -->
+
 							</div>
 						</div>
 					</div>
