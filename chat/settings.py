@@ -27,7 +27,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok.io', '.ngrok-free.app', '*.serveo.net', '*']
 CSRF_TRUSTED_ORIGINS = ['https://*.ngrok.io', 'https://*.ngrok-free.app', 'https://*.serveo.net']
 
-ALLOWED_HOSTS = []
+
+TWILIO_ACCOUNT_SID = '   '
+TWILIO_AUTH_TOKEN = '  '
+TWILIO_WHATSAPP_NUMBER = 'whatsapp:+  '
 
 
 # Application definition

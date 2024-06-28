@@ -27,6 +27,7 @@ mis_cursosb = False
 registrar_hijob = False
 notas_hijob = False
 cambio_contrasena_en_proceso = False
+mis_notas_alumno = False
 
 nombre = ""
 apellido = ""
@@ -102,6 +103,9 @@ def generate_response(message,request):
     if mis_materiasb:
         return procesar_respuesta_mis_materias(message)
 
+    if mis_notas_alumno:
+        return procesar_mis_notas_alumno(message)
+
     if registrar_hijob:
         return procesar_respuesta_registrarhijo(message)
 
@@ -132,10 +136,13 @@ def generate_response(message,request):
             "cerrar sesion": lambda: cerrar_sesion(request),
             "mis materias": mis_materias,
             "cuales son las notas de mi hijo": notas_hijo,
+            "notas de mi hijo": notas_hijo,
             "mis cursos": mis_cursos,
             "perfil": perfil(request),
             "ajustes": ajustes(request),
             "cambio de contraseña": iniciar_cambio_contrasena,
+            "cambiar contraseña": iniciar_cambio_contrasena,
+            "mis notas": iniciar_misnotas,
 
             "hola": "¡Hola! ¿Cómo puedo ayudarte hoy?",
             "adiós": "¡Adiós! Que tengas un buen día.",
@@ -483,17 +490,14 @@ def procesar_respuesta_registrarhijo(message):
     global registro_en_proceso, nombre, apellido, fecha_nacimiento, cedula, email
     doc = nlp(message)
     if not nombre:
-        for ent in doc.ents:
-            if ent.label_ == 'PER':
-                nombre = ent.text
-                return "Proporciona el apellido:"
-        return "No pude el nombre. Por favor, proporciona el nombre."
+        nombre = message
+        return "Proporciona el apellido:"
     if not apellido:
-        for ent in doc.ents:
-            if ent.label_ == 'PER':
-                apellido = ent.text
-                return "Proporciona la fecha de nacimiento (AAAA-MM-DD):"
-        return "No pude reconocer el apellido. Por favor, proporciona el apellido."
+       if message:
+          apellido = message
+          return "Proporciona la fecha de nacimiento (AAAA-MM-DD):"
+       else:
+          return "No pude reconocer el apellido. Por favor, proporciona el apellido."
 
     if not fecha_nacimiento:
         try:
@@ -591,6 +595,28 @@ def ajustes(request):
         return "ajustes"
     return "No estas logeado?"
 
+def iniciar_misnotas():
+    global mis_notas_alumno
+    mis_notas_alumno = True
+    return "Por favor, proporciona tu numero de cedula para conocer tus notas:"
+
+def procesar_mis_notas_alumno(message):
+    global mis_notas_alumno,cedula
+    if len(message) == 10 and message.isdigit():
+        cedula = message
+        try:
+            persona = Persona.objects.get(cedula=cedula)
+            notas = Nota.objects.filter(alumno=persona).select_related('materia').distinct()
+            if notas:
+                materias_y_notas = '\n'.join(f"- {nota.materia.nombre}: {round(nota.nota, 2)}" for nota in notas)
+                procesar_salir()
+                return f"Las materias y notas de {persona.nombre} son:\n{materias_y_notas}"
+                cedula = ""
+            else:
+                cedula = ""
+                return "El alumno no tiene materias registradas."
+        except Exception as e:
+            return "No existe persona registrada con el numero de cedula ingresado"
 
 def iniciar_cambio_contrasena():
     global cambio_contrasena_en_proceso

@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="whatsapp twilio">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/chatbot.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/chatbot.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,6 +193,10 @@
       <workItem from="1718752308670" duration="1197000" />
       <workItem from="1718837518252" duration="8820000" />
       <workItem from="1719169454667" duration="22064000" />
+      <workItem from="1719270588636" duration="6205000" />
+      <workItem from="1719447731542" duration="4405000" />
+      <workItem from="1719453780900" duration="2449000" />
+      <workItem from="1719528625941" duration="3234000" />
     </task>
     <task id="LOCAL-00001" summary="asd">
       <option name="closed" value="true" />
@@ -332,7 +339,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/chat/views.py</url>
-          <line>80</line>
+          <line>81</line>
           <option name="timeStamp" value="57" />
         </line-breakpoint>
       </breakpoints>
