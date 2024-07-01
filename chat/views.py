@@ -143,6 +143,7 @@ def generate_response(message,request):
             "cambio de contraseña": iniciar_cambio_contrasena,
             "cambiar contraseña": iniciar_cambio_contrasena,
             "mis notas": iniciar_misnotas,
+            "registrar hijo": registrar_hijo,
 
             "hola": "¡Hola! ¿Cómo puedo ayudarte hoy?",
             "adiós": "¡Adiós! Que tengas un buen día.",
@@ -180,12 +181,10 @@ def generate_response(message,request):
             "hay tutorías disponibles": "Sí, ofrecemos tutorías personalizadas. Consulta con soporte para más detalles.",
             "cómo accedo a mi cuenta en línea": "Puedes acceder a tu cuenta en línea desde nuestra página web usando tu usuario y contraseña.",
 
-            "registrar hijo": registrar_hijo,
-
             "inscripción a cursos": "Para inscribirte a cursos, dirígete a la sección de 'Cursos Disponibles' en tu cuenta y selecciona los cursos en los que deseas inscribirte.",
             "materias disponibles": "Puedes ver la lista de materias disponibles en la sección 'Materias' de nuestra página web.",
             "calificaciones": "Las calificaciones de los alumnos pueden ser consultadas en la sección 'Materias' después de iniciar sesión en tu cuenta como docente.",
-            "calificaciones de los hijos": "Puedes ver las calificaciones de tus hijos en la sección 'Calificaciones de los Hijos' una vez que hayas iniciado sesión en tu cuenta.",
+            "calificaciones de los hijos": "Puedes ver las calificaciones de tus hijos en la sección  una vez que hayas iniciado sesión en tu cuenta.",
             "cursos del docente": "Los cursos que dicta el docente pueden ser vistos en la sección 'Cursos' al iniciar sesión.",
             "cursos del alumno": "Los cursos en los que está inscrito el alumno pueden ser consultados en la sección 'Materias' después de iniciar sesión en tu cuenta.",
             "información del alumno": "La información detallada del alumno está disponible en la sección 'Perfil' una vez que hayas iniciado sesión.",
@@ -435,6 +434,7 @@ def procesar_respuesta_notas_hijo(message):
         parentesco = Parentesco.objects.filter(padre__cedula=message).first()
         message = parentesco.hijo.cedula if parentesco is not None else None
         if not message:
+            notas_hijob = False
             return "No tiene hijos registrados."
     if not cedula:
         if len(message) == 10 and message.isdigit():
