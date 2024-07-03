@@ -28,6 +28,7 @@ registrar_hijob = False
 notas_hijob = False
 cambio_contrasena_en_proceso = False
 mis_notas_alumno = False
+registro_materia = False
 
 nombre = ""
 apellido = ""
@@ -35,6 +36,8 @@ fecha_nacimiento = ""
 cedula = ""
 email = ""
 personalisada = ""
+curso=""
+materia=""
 
 
 
@@ -42,7 +45,6 @@ personalisada = ""
 def twilio_webhook(request):
     if request.method == 'POST':
         message_body = request.POST.get('Body', '')
-        from_number = request.POST.get('From', '')
         print(request.POST)
 
         response_text = generate_response(message_body,request)  # Tu función para generar la respuesta
@@ -84,7 +86,10 @@ def generate_response(message,request):
 
     message = message.lower()
     doc = nlp(message)
- 
+
+    if registro_materia:
+        return procesar_registro_materias_alumno(message)
+
     if message == "cancelar" or message == "exit":
         return procesar_salir()
 
@@ -144,6 +149,7 @@ def generate_response(message,request):
             "cambiar contraseña": iniciar_cambio_contrasena,
             "mis notas": iniciar_misnotas,
             "registrar hijo": registrar_hijo,
+            "registrar materias alumno":iniciar_registro_materia_alumno,
 
             "hola": "¡Hola! ¿Cómo puedo ayudarte hoy?",
             "adiós": "¡Adiós! Que tengas un buen día.",
@@ -655,3 +661,51 @@ def procesar_respuesta_cambio_contrasena(message, request):
             return f"Error en el cambio de contraseña: {str(e)}"
 
     return "Por favor, proporciona la información solicitada."
+
+
+def iniciar_registro_materia_alumno():
+    global registro_materia,usuario
+    if usuario:
+        if usuario['tipo'] == "Administrador":
+            registro_materia = True
+            return "Para comenzar el registro, por favor proporciona la cedula del alumno:"
+        else:
+            return "Solo los administradores pueden asignar materias a los alumnos"
+    elif personalisada:
+        if personalisada.tipo == "Administrador":
+            registro_materia = True
+            return "Para comenzar el registro, por favor proporciona la cedula del alumno:"
+        else:
+            return "Solo los administradores pueden asignar materias a los alumnos"
+    else:
+        return "Solo los administradores pueden asignar materias a los alumnos"
+
+def procesar_registro_materias_alumno(message):
+    try:
+        global registro_materia, usuario , cedula ,curso,materia
+        if not cedula:
+           if len(message) == 10 and message.isdigit():
+               cedula = message
+               cur = Curso.objects.all()
+               cursos = '\n'.join(f"- {curso.nombre}" for curso in cur)
+               return f"Escoja el el curso:\n{cursos}"
+
+        if not curso:
+            curso = Curso.objects.filter(nombre=message).first()
+            mat = Materia.objects.filter(curso=curso)
+            materias = '\n'.join(f"-{mat.nombre}" for mat in mat)
+            return f"Escoja la materia del curso:\n{materias}"
+        if not materia:
+            materia = Materia.objects.filter(nombre=message,curso=curso).first()
+
+            persona = Persona.objects.get(cedula=cedula)
+            item = Nota(
+                alumno=persona,
+                materia=materia,
+                nota=0
+            )
+            item.save()
+            registro_materia = False
+            return "Se ha registrado la materia la alumno."
+    except Exception as e:
+       return f"Ingrese los datos solicitados. Error: {str(e)}"
