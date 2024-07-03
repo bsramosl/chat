@@ -45,7 +45,7 @@ if not admin_user.is_superuser:
 
 # Crear Unidades Educativas
 unidades_educativas = []
-for _ in range(3):
+for _ in range(1):
     nombre_unidad = fake.company()
     if nombre_unidad not in unidades_educativas_creadas:
         unidad = UnidadEducativa(
@@ -78,7 +78,7 @@ for _ in range(300):
             telefono=fake.phone_number()[:10],
             email=user.email,
             usuario=user,
-            unidad_educativa=random.choice(unidades_educativas),
+            unidad_educativa=unidades_educativas[0],
             tipo=random.choice(['Alumno', 'Padre', 'Profesor'])
         )
         persona.save()
@@ -102,7 +102,7 @@ cursos = []
 for _ in range(20):
     curso = Curso(
         nombre=fake.bs(),
-        unidad_educativa=random.choice(unidades_educativas),
+        unidad_educativa= unidades_educativas[0],
         profesor=random.choice(profesores)
     )
     curso.save()
