@@ -8,7 +8,7 @@ import json
 import logging
 import spacy
 from chat.auth import auth
-from chat.models import Persona, Nota, Curso, Parentesco
+from chat.models import Persona, Nota, Curso, Parentesco, Materia
 from django.middleware.csrf import get_token
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
@@ -90,11 +90,7 @@ def generate_response(message,request):
     if registro_materia:
         return procesar_registro_materias_alumno(message)
 
-    if message == "cancelar" or message == "exit":
-        return procesar_salir()
 
-    if message == "salir" :
-        return procesarpersonalizada()
 
     if login_en_proceso:
         return procesar_respuesta_login(message, request)
@@ -125,11 +121,18 @@ def generate_response(message,request):
             if len(message) == 10 and message.isdigit():
                 try:
                     personalisada = Persona.objects.get(cedula=message)
+                    request.session['tp'] = personalisada.tipo
                     return f"En que puedo ayudarte \n{personalisada.nombre}"
                 except Exception as e:
                     return "No existe persona registrada con el numero de cedula ingresado"
 
     # Si no hay un proceso de registro en curso, procesar como de costumbre
+    if message == "cancelar" or message == "exit":
+        return procesar_salir()
+
+    if message == "salir":
+        return procesarpersonalizada(request)
+
     if not registro_en_proceso:
     
         responses = {
@@ -560,7 +563,7 @@ def registrohijo():
     return mensaje_confirmacion
 
 def procesar_salir():
-    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    global personalisada,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
@@ -568,9 +571,10 @@ def procesar_salir():
     registrar_hijob = False
     notas_hijob = False
     cambio_contrasena_en_proceso = False
-    return "Hola👋 Como puedo ayudarte?"
+    return "Hola👋 Como puedo ayudarte %s." % personalisada
 
-def procesarpersonalizada():
+
+def procesarpersonalizada(request):
     global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
     registro_en_proceso = False
     login_en_proceso = False
@@ -580,6 +584,7 @@ def procesarpersonalizada():
     notas_hijob = False
     personalisada = ""
     cambio_contrasena_en_proceso = False
+    del request.session['tp']
     return "Hola👋 Como puedo ayudarte?"
 
 def procesar_salir_cambio_contrasena(request):
@@ -709,3 +714,7 @@ def procesar_registro_materias_alumno(message):
             return "Se ha registrado la materia la alumno."
     except Exception as e:
        return f"Ingrese los datos solicitados. Error: {str(e)}"
+
+def get_session_tp(request):
+    tp = request.session.get('tp', 'Persona')  # Retorna 'Persona' si 'tp' no está en la sesión
+    return JsonResponse({'tp': tp})

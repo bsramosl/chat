@@ -24,7 +24,8 @@ urlpatterns = [
     path('perfil', perfil.view, name='perfil'),
     path('cursos', cursos.view, name='cursos'),
     path('materias', materiaalumno.view, name='materias'),
-    path('twilio_webhook', twilio_webhook, name='twilio_webhook')
+    path('twilio_webhook', twilio_webhook, name='twilio_webhook'),
+    path('session-tp', get_session_tp, name='session-tp'),
 ]
 
 if settings.DEBUG:
