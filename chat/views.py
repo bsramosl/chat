@@ -716,5 +716,9 @@ def procesar_registro_materias_alumno(message):
        return f"Ingrese los datos solicitados. Error: {str(e)}"
 
 def get_session_tp(request):
+    if request.session.get('usuario'):
+        tp = request.session['usuario'].get('tipo')
+        return JsonResponse({'tp': tp})
+
     tp = request.session.get('tp', 'Persona')  # Retorna 'Persona' si 'tp' no está en la sesión
     return JsonResponse({'tp': tp})
