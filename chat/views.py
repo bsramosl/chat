@@ -484,7 +484,7 @@ def procesar_respuesta_mis_profesores_hijo(message):
     global profesores_hijob, cedula, usuario ,personalisada
 
     if usuario:
-        parentesco = Parentesco.objects.filter(padre__cedula=message)
+        parentesco = Parentesco.objects.filter(padre__cedula=usuario['cedula'])
 
     if personalisada:
         parentesco = Parentesco.objects.filter(padre__cedula=personalisada.cedula)
