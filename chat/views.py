@@ -26,6 +26,8 @@ mis_materiasb = False
 mis_cursosb = False
 registrar_hijob = False
 notas_hijob = False
+profesores_hijob = False
+
 cambio_contrasena_en_proceso = False
 mis_notas_alumno = False
 registro_materia = False
@@ -87,10 +89,17 @@ def generate_response(message,request):
     message = message.lower()
     doc = nlp(message)
 
+    if message == "cancelar" or message == "exit":
+        return procesar_salir()
+
+    if message == "salir":
+        return procesarpersonalizada(request)
+
     if registro_materia:
         return procesar_registro_materias_alumno(message)
 
-
+    if profesores_hijob:
+        return procesar_respuesta_mis_profesores_hijo(message)
 
     if login_en_proceso:
         return procesar_respuesta_login(message, request)
@@ -127,12 +136,6 @@ def generate_response(message,request):
                     return "No existe persona registrada con el numero de cedula ingresado"
 
     # Si no hay un proceso de registro en curso, procesar como de costumbre
-    if message == "cancelar" or message == "exit":
-        return procesar_salir()
-
-    if message == "salir":
-        return procesarpersonalizada(request)
-
     if not registro_en_proceso:
     
         responses = {
@@ -144,6 +147,7 @@ def generate_response(message,request):
             "cerrar sesion": lambda: cerrar_sesion(request),
             "mis materias": mis_materias,
             "cuales son las notas de mi hijo": notas_hijo,
+            "cuales son los profesores de mi hijo": profesores_hijo,
             "notas de mi hijo": notas_hijo,
             "mis cursos": mis_cursos,
             "perfil": perfil(request),
@@ -391,6 +395,16 @@ def notas_hijo():
         return procesar_respuesta_notas_hijo(usuario['cedula'])
     return "Para conocer las notas de tu hijo ingresa su numero de cedula:"
 
+def profesores_hijo():
+    global profesores_hijob,personalisada
+    profesores_hijob = True
+    if personalisada:
+        return procesar_respuesta_mis_profesores_hijo(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_mis_profesores_hijo(usuario['cedula'])
+    return "Para conocer los profesores de tu hijo ingresa su numero de cedula:"
+
+
 def mis_cursos():
     global mis_cursosb,personalisada,usuario
     mis_cursosb = True
@@ -465,6 +479,46 @@ def procesar_respuesta_notas_hijo(message):
             cedula = ""
             return "Número de cédula incorrecto. Proporciona un número de cédula de 10 dígitos."
     return "Por favor, proporciona la información solicitada."
+
+def procesar_respuesta_mis_profesores_hijo(message):
+    global profesores_hijob, cedula, usuario ,personalisada
+
+    if usuario:
+        parentesco = Parentesco.objects.filter(padre__cedula=message)
+
+    if personalisada:
+        parentesco = Parentesco.objects.filter(padre__cedula=personalisada.cedula)
+
+    if len(message) == 10 and message.isdigit():
+        parentesco = Parentesco.objects.filter(padre__cedula=message)
+
+    if parentesco:
+        notas = Nota.objects.filter(alumno__in=parentesco.values_list('hijo', flat=True)).distinct()
+        hijos_profesores = {}
+
+        for nota in notas:
+            hijo_nombre = nota.alumno.nombre
+            profesor_nombre = nota.materia.curso.profesor.nombre
+
+            # Agrega el nombre del hijo al diccionario si no existe
+            if hijo_nombre not in hijos_profesores:
+                hijos_profesores[hijo_nombre] = set()
+
+            # Agrega el nombre del profesor al conjunto de profesores del hijo
+            hijos_profesores[hijo_nombre].add(profesor_nombre)
+
+        # Crear la cadena de texto con la información requerida
+        resultado = []
+        for hijo, profesores in hijos_profesores.items():
+            profesores_str = ', '.join(profesores)
+            resultado.append(f"Alumno:\n {hijo}\nProfesores:\n{profesores_str}")
+
+        resultado_str = '\n'.join(resultado)
+        profesores_hijob = False
+        return resultado_str
+    else:
+        return "No tiene hijos registrados."
+
 
 def procesar_respuesta_mis_cursosb(message):
     global mis_cursosb,cedula
@@ -563,25 +617,27 @@ def registrohijo():
     return mensaje_confirmacion
 
 def procesar_salir():
-    global personalisada,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    global profesores_hijob,personalisada,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
     mis_cursosb = False
     registrar_hijob = False
     notas_hijob = False
+    profesores_hijob = False
     cambio_contrasena_en_proceso = False
     return "Hola👋 Como puedo ayudarte %s." % personalisada
 
 
 def procesarpersonalizada(request):
-    global registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    global profesores_hijob,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
     mis_cursosb = False
     registrar_hijob = False
     notas_hijob = False
+    profesores_hijob = False
     personalisada = ""
     cambio_contrasena_en_proceso = False
     del request.session['tp']
