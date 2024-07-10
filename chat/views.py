@@ -27,10 +27,17 @@ mis_cursosb = False
 registrar_hijob = False
 notas_hijob = False
 profesores_hijob = False
+contacto_docenteb = False
+mis_estudiantesb = False
+contacto_docente_materia_b = False
+
+
 
 cambio_contrasena_en_proceso = False
 mis_notas_alumno = False
 registro_materia = False
+mis_profesoresb = False
+
 
 nombre = ""
 apellido = ""
@@ -95,6 +102,18 @@ def generate_response(message,request):
     if message == "salir":
         return procesarpersonalizada(request)
 
+    if contacto_docente_materia_b:
+        return procesar_respuesta_contacto_docente_materia(message)
+
+    if mis_estudiantesb:
+        return procesar_respuesta_mis_estudiantes(message)
+
+    if contacto_docenteb:
+        return procesar_respuesta_contacto_docente(message)
+
+    if  mis_profesoresb:
+        return procesar_respuesta_mis_profesores(message)
+
     if registro_materia:
         return procesar_registro_materias_alumno(message)
 
@@ -157,6 +176,10 @@ def generate_response(message,request):
             "mis notas": iniciar_misnotas,
             "registrar hijo": registrar_hijo,
             "registrar materias alumno":iniciar_registro_materia_alumno,
+            "contacto del docente": contacto_docente,
+            "mis profesores": mis_profesores,
+            "mis estudiantes": mis_estudiantes,
+            "contacto del docente por materia": contacto_docente_materia,
 
             "hola": "¡Hola! ¿Cómo puedo ayudarte hoy?",
             "adiós": "¡Adiós! Que tengas un buen día.",
@@ -616,38 +639,6 @@ def registrohijo():
     procesar_salir()
     return mensaje_confirmacion
 
-def procesar_salir():
-    global profesores_hijob,personalisada,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
-    registro_en_proceso = False
-    login_en_proceso = False
-    mis_materiasb = False
-    mis_cursosb = False
-    registrar_hijob = False
-    notas_hijob = False
-    profesores_hijob = False
-    cambio_contrasena_en_proceso = False
-    return "Hola👋 Como puedo ayudarte %s." % personalisada
-
-
-def procesarpersonalizada(request):
-    global profesores_hijob,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
-    registro_en_proceso = False
-    login_en_proceso = False
-    mis_materiasb = False
-    mis_cursosb = False
-    registrar_hijob = False
-    notas_hijob = False
-    profesores_hijob = False
-    personalisada = ""
-    cambio_contrasena_en_proceso = False
-    del request.session['tp']
-    return "Hola👋 Como puedo ayudarte?"
-
-def procesar_salir_cambio_contrasena(request):
-    del request.session['username_cambio']
-    del request.session['password_actual']
-    del request.session['password_nueva']
-    procesar_salir()
 
 
 def perfil(request):
@@ -771,6 +762,186 @@ def procesar_registro_materias_alumno(message):
     except Exception as e:
        return f"Ingrese los datos solicitados. Error: {str(e)}"
 
+
+
+def contacto_docente():
+    global contacto_docenteb, personalisada, usuario
+    contacto_docenteb = True
+    if personalisada:
+        return procesar_respuesta_contacto_docente(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_contacto_docente(usuario['cedula'])
+    return "Para conocer el contacto de tus profesores, ingresa tu número de cédula:"
+
+
+def procesar_respuesta_contacto_docente(message):
+    global contacto_docenteb, cedula
+    if message:
+        if len(message) == 10 and message.isdigit():
+            cedula = message
+        if usuario:
+            cedula = usuario['cedula']
+
+        if personalisada:
+            cedula = personalisada.cedula
+
+        if cedula:
+            alumno = Persona.objects.get(cedula=cedula, tipo='Alumno')
+        else :
+            return "Número de cédula incorrecto. Proporciona un número de cédula de 10 dígitos."
+        try:
+            notas = Nota.objects.filter(alumno=alumno).select_related('materia__curso__profesor').distinct()
+            profesores_contacto = {nota.materia.curso.profesor: nota.materia.curso.profesor.email for nota in notas}
+            if profesores_contacto:
+                contacto_lista = '\n'.join(f"- {profesor.nombre} {profesor.apellidos}: {email}" for profesor, email in profesores_contacto.items())
+                contacto_docenteb = False
+                return f"Contactos de tus profesores:\n{contacto_lista}"
+            else:
+                contacto_docenteb = False
+                return "No tienes profesores registrados."
+        except Persona.DoesNotExist:
+            return "No se encontró un alumno con la cédula proporcionada."
+    return "Por favor, proporciona la información solicitada."
+
+
+def mis_profesores():
+    global mis_profesoresb, personalisada, usuario
+    mis_profesoresb = True
+    if personalisada:
+        return procesar_respuesta_mis_profesores(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_mis_profesores(usuario['cedula'])
+    return "Para conocer tus profesores, ingresa tu número de cédula:"
+
+def procesar_respuesta_mis_profesores(message):
+    global mis_profesoresb, cedula
+    if message:
+        if len(message) == 10 and message.isdigit():
+            cedula = message
+        if usuario:
+            cedula = usuario['cedula']
+
+        if personalisada:
+            cedula = personalisada.cedula
+
+        if cedula:
+            alumno = Persona.objects.get(cedula=cedula, tipo='Alumno')
+        else:
+            return "Número de cédula incorrecto. Proporciona un número de cédula de 10 dígitos."
+        try:
+            notas = Nota.objects.filter(alumno=alumno).select_related('materia__curso__profesor').distinct()
+            profesores = {nota.materia.curso.profesor for nota in notas}
+            if profesores:
+                profesores_lista = '\n'.join(f"- {profesor.nombre} {profesor.apellidos}" for profesor in profesores)
+                mis_profesoresb = False
+                return f"Tus profesores son:\n{profesores_lista}"
+            else:
+                mis_profesoresb = False
+                return "No tienes profesores registrados."
+        except Persona.DoesNotExist:
+            return "No se encontró un alumno con la cédula proporcionada."
+    return "Por favor, proporciona la información solicitada."
+
+def mis_estudiantes():
+    global mis_estudiantesb, personalisada, usuario
+    mis_estudiantesb = True
+    if personalisada:
+        return procesar_respuesta_mis_estudiantes(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_mis_estudiantes(usuario['cedula'])
+    return "Para conocer tus estudiantes, ingresa tu número de cédula:"
+
+def procesar_respuesta_mis_estudiantes(message):
+    global mis_estudiantesb, cedula
+    if message:
+        if len(message) == 10 and message.isdigit():
+            cedula = message
+        if usuario:
+            cedula = usuario['cedula']
+
+        if personalisada:
+            cedula = personalisada.cedula
+
+        if cedula:
+            profesor = Persona.objects.get(cedula=cedula, tipo='Profesor')
+        else:
+            return "Número de cédula incorrecto. Proporciona un número de cédula de 10 dígitos."
+        try:
+            cursos = Curso.objects.filter(profesor=profesor)
+            estudiantes = Persona.objects.filter(nota__materia__curso__in=cursos).distinct()
+            if estudiantes:
+                estudiantes_lista = '\n'.join(f"- {estudiante.nombre} {estudiante.apellidos}" for estudiante in estudiantes)
+                mis_estudiantesb = False
+                return f"Tus estudiantes son:\n{estudiantes_lista}"
+            else:
+                mis_estudiantesb = False
+                return "No tienes estudiantes registrados."
+        except Persona.DoesNotExist:
+            return "No se encontró un profesor con la cédula proporcionada."
+    return "Por favor, proporciona la información solicitada."
+
+
+def contacto_docente_materia():
+    global contacto_docente_materia_b, personalisada, usuario
+    contacto_docente_materia_b = True
+    if personalisada:
+        return procesar_respuesta_contacto_docente_materia(personalisada.cedula)
+    if usuario:
+        return procesar_respuesta_contacto_docente_materia(usuario['cedula'])
+    return "Para conocer el contacto de docentes por materia, ingresa tu número de cédula:"
+
+def procesar_respuesta_contacto_docente_materia(message):
+    global contacto_docente_materia_b, cedula, usuario ,personalisada
+
+    if len(message) == 10 and message.isdigit():
+        cedula = message
+    if usuario:
+        cedula = usuario['cedula']
+
+    if personalisada:
+        cedula = personalisada.cedula
+
+    if cedula:
+        parentesco = Parentesco.objects.filter(padre__cedula=cedula)
+    else:
+        return "Número de cédula incorrecto. Proporciona un número de cédula de 10 dígitos."
+
+    if parentesco:
+        notas = Nota.objects.filter(alumno__in=parentesco.values_list('hijo', flat=True)).distinct()
+        hijos_profesores = {}
+
+        for nota in notas:
+            hijo_nombre = nota.alumno.nombre
+            materia_nombre = nota.materia.nombre
+            profesor_nombre = nota.materia.curso.profesor.nombre
+            profesor_email = nota.materia.curso.profesor.email
+
+            # Agrega el nombre del hijo al diccionario si no existe
+            if hijo_nombre not in hijos_profesores:
+                hijos_profesores[hijo_nombre] = []
+
+            # Agrega la información del profesor al conjunto de profesores del hijo
+            hijos_profesores[hijo_nombre].append({
+                'materia': materia_nombre,
+                'profesor': profesor_nombre,
+                'contacto': profesor_email
+            })
+
+        # Crear la cadena de texto con la información requerida
+        resultado = []
+        for hijo, profesores in hijos_profesores.items():
+            profesores_info = '\n'.join(
+                f"Materia: {prof['materia']}\nProfesor: {prof['profesor']}\nContacto:\n{prof['contacto']}" for prof in
+                profesores)
+            resultado.append(f"Alumno:\n{hijo}\n{profesores_info}")
+
+        resultado_str = '\n'.join(resultado)
+        contacto_docente_materia_b = False
+        return resultado_str
+    else:
+        contacto_docente_materia_b = False
+        return "No tiene hijos registrados."
+
 def get_session_tp(request):
     if request.session.get('usuario'):
         tp = request.session['usuario'].get('tipo')
@@ -778,3 +949,43 @@ def get_session_tp(request):
 
     tp = request.session.get('tp', 'Persona')  # Retorna 'Persona' si 'tp' no está en la sesión
     return JsonResponse({'tp': tp})
+
+def procesar_salir():
+    global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,personalisada,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    registro_en_proceso = False
+    login_en_proceso = False
+    mis_materiasb = False
+    mis_cursosb = False
+    registrar_hijob = False
+    notas_hijob = False
+    profesores_hijob = False
+    cambio_contrasena_en_proceso = False
+    contacto_docenteb = False
+    mis_profesoresb = False
+    contacto_docente_materia_b = False
+
+    return "Hola👋 Como puedo ayudarte %s." % personalisada
+
+
+def procesarpersonalizada(request):
+    global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    registro_en_proceso = False
+    login_en_proceso = False
+    mis_materiasb = False
+    mis_cursosb = False
+    registrar_hijob = False
+    notas_hijob = False
+    profesores_hijob = False
+    contacto_docenteb = False
+    mis_profesoresb = False
+    personalisada = ""
+    cambio_contrasena_en_proceso = False
+    contacto_docente_materia_b = False
+    del request.session['tp']
+    return "Hola👋 Como puedo ayudarte?"
+
+def procesar_salir_cambio_contrasena(request):
+    del request.session['username_cambio']
+    del request.session['password_actual']
+    del request.session['password_nueva']
+    procesar_salir()
