@@ -50,6 +50,34 @@ materia=""
 
 
 
+
+def verificar_cedula(cedula):
+    total = 0
+    tamano_longitud_cedula = 10
+    coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2]
+    numero_provincias = 24
+    tercer_digito = 6
+
+    if len(cedula) == tamano_longitud_cedula and cedula.isdigit():
+        provincia = int(cedula[0:2])
+        digito_tres = int(cedula[2])
+
+        if 0 < provincia <= numero_provincias and digito_tres < tercer_digito:
+            digito_verificador_recibido = int(cedula[9])
+            for i in range(len(coeficientes)):
+                valor = int(cedula[i]) * coeficientes[i]
+                if valor >= 10:
+                    valor -= 9
+                total += valor
+
+            digito_verificador_obtenido = 10 - (total % 10) if total % 10 != 0 else 0
+
+            if digito_verificador_obtenido == digito_verificador_recibido:
+                return True
+
+    return False
+
+
 @csrf_exempt
 def twilio_webhook(request):
     if request.method == 'POST':
@@ -147,6 +175,8 @@ def generate_response(message,request):
     if not personalisada:
         if not 'usuario' in request.session:
             if len(message) == 10 and message.isdigit():
+                if not verificar_cedula(message):
+                    return "Número de cédula incorrecto. Proporciona un número de cédula valido."
                 try:
                     personalisada = Persona.objects.get(cedula=message)
                     request.session['tp'] = personalisada.tipo
@@ -306,6 +336,8 @@ def procesar_respuesta_registro(message):
 
     if not cedula:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
             return registro()
         else:
@@ -450,6 +482,8 @@ def procesar_respuesta_mis_materias(message):
     global mis_materiasb,cedula
     if message:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
             try:
                 persona = Persona.objects.get(cedula=cedula)
@@ -484,6 +518,8 @@ def procesar_respuesta_notas_hijo(message):
             return "No tiene hijos registrados."
     if not cedula:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
             try:
                 persona = Persona.objects.get(cedula=cedula)
@@ -513,6 +549,8 @@ def procesar_respuesta_mis_profesores_hijo(message):
         parentesco = Parentesco.objects.filter(padre__cedula=personalisada.cedula)
 
     if len(message) == 10 and message.isdigit():
+        if not verificar_cedula(message):
+            return "Número de cédula incorrecto. Proporciona un número de cédula valido."
         parentesco = Parentesco.objects.filter(padre__cedula=message)
 
     if parentesco:
@@ -547,6 +585,8 @@ def procesar_respuesta_mis_cursosb(message):
     global mis_cursosb,cedula
     if message:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
             try:
                 persona = Persona.objects.get(cedula=cedula)
@@ -602,6 +642,8 @@ def procesar_respuesta_registrarhijo(message):
 
     if not cedula:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
             return registrohijo()
         else:
@@ -661,6 +703,8 @@ def iniciar_misnotas():
 def procesar_mis_notas_alumno(message):
     global mis_notas_alumno,cedula
     if len(message) == 10 and message.isdigit():
+        if not verificar_cedula(message):
+            return "Número de cédula incorrecto. Proporciona un número de cédula valido."
         cedula = message
         try:
             persona = Persona.objects.get(cedula=cedula)
@@ -737,6 +781,8 @@ def procesar_registro_materias_alumno(message):
         global registro_materia, usuario , cedula ,curso,materia
         if not cedula:
            if len(message) == 10 and message.isdigit():
+               if not verificar_cedula(message):
+                   return "Número de cédula incorrecto. Proporciona un número de cédula valido."
                cedula = message
                cur = Curso.objects.all()
                cursos = '\n'.join(f"- {curso.nombre}" for curso in cur)
@@ -778,6 +824,8 @@ def procesar_respuesta_contacto_docente(message):
     global contacto_docenteb, cedula
     if message:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
         if usuario:
             cedula = usuario['cedula']
@@ -817,6 +865,8 @@ def procesar_respuesta_mis_profesores(message):
     global mis_profesoresb, cedula
     if message:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
         if usuario:
             cedula = usuario['cedula']
@@ -855,6 +905,8 @@ def procesar_respuesta_mis_estudiantes(message):
     global mis_estudiantesb, cedula
     if message:
         if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
             cedula = message
         if usuario:
             cedula = usuario['cedula']
@@ -894,7 +946,10 @@ def procesar_respuesta_contacto_docente_materia(message):
     global contacto_docente_materia_b, cedula, usuario ,personalisada
 
     if len(message) == 10 and message.isdigit():
+        if not verificar_cedula(message):
+            return "Número de cédula incorrecto. Proporciona un número de cédula valido."
         cedula = message
+
     if usuario:
         cedula = usuario['cedula']
 

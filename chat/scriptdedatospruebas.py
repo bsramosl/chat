@@ -1,20 +1,17 @@
 import os
 import random
-
 import django
 from faker import Faker
 fake = Faker('es_ES')
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat.settings')
-# Configura las configuraciones de Django y llama a django.setup()
 django.setup()
 
 from django.contrib.auth.models import User
 from chat.models import UnidadEducativa, Persona, Parentesco, Curso, Materia, Matricula, Nota
+
 usuarios_creados = set()
 unidades_educativas_creadas = set()
-
 
 UnidadEducativa.objects.all().delete()
 Persona.objects.all().delete()
@@ -25,23 +22,33 @@ Matricula.objects.all().delete()
 Nota.objects.all().delete()
 User.objects.all().delete()
 
+def generar_cedula_valida():
+    provincia = random.randint(1, 24)
+    digitos = [provincia // 10, provincia % 10]
+    digitos += [random.randint(0, 9) for _ in range(7)]
+    coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2]
+    suma = sum(d * c if d * c < 10 else d * c - 9 for d, c in zip(digitos, coeficientes))
+    digito_verificador = (10 - suma % 10) % 10
+    digitos.append(digito_verificador)
+    return ''.join(map(str, digitos))
+
 admin_user = User.objects.create_superuser('admin', 'admin@example.com', 'password123')
 persona = Persona(
-            nombre='admin',
-            apellidos='admin',
-            cedula=f''.join([str(random.randint(0, 9)) for _ in range(10)]),
-            nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
-            sexo=random.choice(['1', '2']),
-            telefono=fake.phone_number()[:10],
-            email='admin@example.com',
-            usuario=admin_user,
-            tipo='Administrador'
-        )
+    nombre='admin',
+    apellidos='admin',
+    cedula=generar_cedula_valida(),
+    nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
+    sexo=random.choice(['1', '2']),
+    telefono=fake.phone_number()[:10],
+    email='admin@example.com',
+    usuario=admin_user,
+    tipo='Administrador'
+)
 persona.save()
 
 if not admin_user.is_superuser:
-        admin_user.is_superuser = True
-        admin_user.save()
+    admin_user.is_superuser = True
+    admin_user.save()
 
 # Crear Unidades Educativas
 unidades_educativas = []
@@ -72,7 +79,7 @@ for _ in range(300):
         persona = Persona(
             nombre=fake.first_name(),
             apellidos=fake.last_name(),
-            cedula=''.join([str(random.randint(0, 9)) for _ in range(10)]),
+            cedula=generar_cedula_valida(),
             nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
             sexo=random.choice(['1', '2']),
             telefono=fake.phone_number()[:10],
