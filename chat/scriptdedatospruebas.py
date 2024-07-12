@@ -2,10 +2,12 @@ import os
 import random
 import django
 from faker import Faker
+
 fake = Faker('es_ES')
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chat.settings')
 django.setup()
+from chat.views import verificar_cedula
 
 from django.contrib.auth.models import User
 from chat.models import UnidadEducativa, Persona, Parentesco, Curso, Materia, Matricula, Nota
@@ -23,14 +25,29 @@ Nota.objects.all().delete()
 User.objects.all().delete()
 
 def generar_cedula_valida():
+    # Generar los primeros dos dígitos que representan la provincia
     provincia = random.randint(1, 24)
-    digitos = [provincia // 10, provincia % 10]
+    digitos = [provincia // 10, provincia % 10]  # ester es mayor a 6
+    # Generar los siguientes seis dígitos aleatorios
     digitos += [random.randint(0, 9) for _ in range(7)]
-    coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2]
-    suma = sum(d * c if d * c < 10 else d * c - 9 for d, c in zip(digitos, coeficientes))
+    # Coeficientes para el cálculo del dígito verificador
+    coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2]  # para todos menos el ultimo digito luego se calcula
+    # Calcular la suma según los coeficientes
+    suma = 0
+    for d, c in zip(digitos, coeficientes):
+        producto = d * c
+        if producto >= 10:
+            producto -= 9
+        suma += producto
+    # Calcular el dígito verificador -->>este es el ultimo digito de la suma de arriba
     digito_verificador = (10 - suma % 10) % 10
+    # Añadir el dígito verificador a la lista de dígitos
     digitos.append(digito_verificador)
-    return ''.join(map(str, digitos))
+    # Convertir la lista de dígitos en una cadena de texto
+    cedula = ''.join(map(str, digitos))
+    return cedula
+
+
 
 admin_user = User.objects.create_superuser('admin', 'admin@example.com', 'password123')
 persona = Persona(
@@ -75,21 +92,22 @@ for _ in range(300):
             password='password123'
         )
         usuarios_creados.add(username)
-
-        persona = Persona(
-            nombre=fake.first_name(),
-            apellidos=fake.last_name(),
-            cedula=generar_cedula_valida(),
-            nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
-            sexo=random.choice(['1', '2']),
-            telefono=fake.phone_number()[:10],
-            email=user.email,
-            usuario=user,
-            unidad_educativa=unidades_educativas[0],
-            tipo=random.choice(['Alumno', 'Padre', 'Profesor'])
-        )
-        persona.save()
-        personas.append(persona)
+        cedula = generar_cedula_valida()
+        if verificar_cedula(cedula):
+            persona = Persona(
+                nombre=fake.first_name(),
+                apellidos=fake.last_name(),
+                cedula=cedula,
+                nacimiento=fake.date_of_birth(minimum_age=5, maximum_age=90),
+                sexo=random.choice(['1', '2']),
+                telefono=fake.phone_number()[:10],
+                email=user.email,
+                usuario=user,
+                unidad_educativa=unidades_educativas[0],
+                tipo=random.choice(['Alumno', 'Padre', 'Profesor'])
+            )
+            persona.save()
+            personas.append(persona)
 
 # Crear Parentescos (padres e hijos)
 alumnos = [persona for persona in personas if persona.tipo == 'Alumno']

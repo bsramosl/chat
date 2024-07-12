@@ -74,7 +74,6 @@ def verificar_cedula(cedula):
 
             if digito_verificador_obtenido == digito_verificador_recibido:
                 return True
-
     return False
 
 
@@ -1036,7 +1035,8 @@ def procesarpersonalizada(request):
     personalisada = ""
     cambio_contrasena_en_proceso = False
     contacto_docente_materia_b = False
-    del request.session['tp']
+    if request.session.get('tp'):
+        del request.session['tp']
     return "Hola👋 Como puedo ayudarte?"
 
 def procesar_salir_cambio_contrasena(request):
