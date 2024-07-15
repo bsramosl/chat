@@ -63,7 +63,7 @@
                   class="btn btn-danger btn-xs"
                   href="javascript:;"
                   title="Eliminar"
-                  onclick="eliminarajax('{{ item.id }}', '{{ dato }}', 'eliminar')"
+                  onclick="eliminarajax('{{ item.id }}', '{{ item.nombre }}', 'eliminar','{{ request.path }}')"
                 >
                   <i class="fa fa-trash-o"></i>
                 </button>
@@ -184,5 +184,7 @@ $(document).ready(function() {
   $(document).on("click", ".close-modal", function () {
     $(this).parents(".modal").modal("hide");
   });
+
+
 </script>
 {% endblock %}

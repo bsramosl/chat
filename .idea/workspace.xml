@@ -6,8 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="59c2a465-d8d4-4557-a8b0-84e7aa79108c" name="Changes" comment="validar cèdula">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/scriptdedatospruebas.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/scriptdedatospruebas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/alumno.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/alumno.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/curso.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/curso.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/materia.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/materia.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/matricula.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/matricula.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/nota.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/nota.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/padre.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/padre.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/profesor.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/profesor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat/view/unidadeducativa.py" beforeDir="false" afterPath="$PROJECT_DIR$/chat/view/unidadeducativa.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/funciones.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/funciones.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/alumno/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/alumno/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/curso/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/curso/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/materia/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/materia/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/matricula/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/matricula/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/nota/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/nota/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/padre/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/padre/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/profesor/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/profesor/view.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/unidadeducativa/view.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/unidadeducativa/view.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +71,7 @@
       <recent name="D:\Django\chat\chat\views" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scriptdedatospruebas">
+  <component name="RunManager" selected="Django Server.chat">
     <configuration name="pagekite" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="chat" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -201,7 +217,8 @@
       <workItem from="1720493959193" duration="4285000" />
       <workItem from="1720569077947" duration="5328000" />
       <workItem from="1720652618511" duration="6192000" />
-      <workItem from="1720740086257" duration="2865000" />
+      <workItem from="1720740086257" duration="3560000" />
+      <workItem from="1721011169652" duration="1750000" />
     </task>
     <task id="LOCAL-00001" summary="asd">
       <option name="closed" value="true" />
@@ -323,7 +340,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720665119843</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="validar cèdula">
+      <option name="closed" value="true" />
+      <created>1720748524567</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1720748524568</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -380,7 +405,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/chat$auth.coverage" NAME="auth Coverage Results" MODIFIED="1715295539005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
     <SUITE FILE_PATH="coverage/chat$pagekite.coverage" NAME="pagekite Coverage Results" MODIFIED="1719185088428" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/chat$scriptdedatospruebas.coverage" NAME="scriptdedatospruebas Coverage Results" MODIFIED="1720748268661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
+    <SUITE FILE_PATH="coverage/chat$scriptdedatospruebas.coverage" NAME="scriptdedatospruebas Coverage Results" MODIFIED="1720748472906" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
     <SUITE FILE_PATH="coverage/chat$perfil.coverage" NAME="perfil Coverage Results" MODIFIED="1717974096447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/chat" />
   </component>
 </project>

@@ -71,8 +71,8 @@ def view(request):
             try:
                 item = Curso.objects.get(pk=request.POST['id'])
                 item.delete()
-                messages.success(request, 'Registro eliminado con éxito.')
-                return redirect(request.META.get('HTTP_REFERER', ''))
+                res_json = {"result": False, 'message': 'Registro eliminado con éxito.'}
+                return JsonResponse(res_json, safe=False)
             except Exception as ex:
                 transaction.set_rollback(True)
                 res_json = {'result': True, "mensaje": "Error: {}".format(ex)}

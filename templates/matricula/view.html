@@ -63,7 +63,7 @@
                   class="btn btn-danger btn-xs"
                   href="javascript:;"
                   title="Eliminar"
-                  onclick="eliminarajax('{{ item.id }}', '{{ dato }}', 'eliminar')"
+                  onclick="eliminarajax('{{ item.id }}', '{{ item.alumno.nombre }}', 'eliminar','{{ request.path }}')"
                 >
                   <i class="fa fa-trash-o"></i>
                 </button>
