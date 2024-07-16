@@ -36,9 +36,7 @@ def view(request):
                                 )
 
                     item.save()
-                    messages.success(request, 'Registro guardado con éxito.')
-                    res_json = {"result": False}
-                    return redirect(request.META.get('HTTP_REFERER', ''))
+                    res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                 else:
                     res_json = {'result': True, "mensaje": "Error en el formulario: {}".format([{k: v[0]} for k, v in form.errors.items()])}
             except Exception as ex:
@@ -56,9 +54,7 @@ def view(request):
                     form = NotaForm(request.POST)
                     if form.is_valid():
                         actualizar_instancia_con_form(vendedor, form)
-                        messages.success(request, 'Registro guardado con éxito.')
-                        res_json = {"result": False}
-                        return redirect(request.META.get('HTTP_REFERER', ''))
+                        res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                     else:
                         res_json = {'result': True, "mensaje": "Error en el formulario: {}".format(
                             [{k: v[0]} for k, v in form.errors.items()])}

@@ -40,9 +40,7 @@ def login_user(request):
                                        usuario=user,
                                        tipo='Padre')
                         item.save()
-                        messages.success(request, 'Registro guardado con éxito.')
-                        res_json = {"result": False}
-                        return redirect(request.META.get('HTTP_REFERER', ''))
+                        res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                     else:
                         res_json = {'result': True, "mensaje": "Error en el formulario: {}".format(
                             [{k: v[0]} for k, v in form.errors.items()])}

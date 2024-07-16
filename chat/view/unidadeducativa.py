@@ -34,9 +34,7 @@ def view(request):
                                 telefono = form.cleaned_data['telefono'],                                )
 
                     item.save()
-                    messages.success(request, 'Registro guardado con éxito.')
-                    res_json = {"result": False}
-                    return redirect(request.META.get('HTTP_REFERER', ''))
+                    res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                 else:
                     res_json = {'result': True, "mensaje": "Error en el formulario: {}".format([{k: v[0]} for k, v in form.errors.items()])}
             except Exception as ex:
@@ -55,9 +53,7 @@ def view(request):
                         vendedor.direccion = form.cleaned_data['direccion']
                         vendedor.telefono = form.cleaned_data['telefono']
                         vendedor.save()
-                        messages.success(request, 'Registro guardado con éxito.')
-                        res_json = {"result": False}
-                        return redirect(request.META.get('HTTP_REFERER', ''))
+                        res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                     else:
                         res_json = {'result': True, "mensaje": "Error en el formulario: {}".format(
                             [{k: v[0]} for k, v in form.errors.items()])}

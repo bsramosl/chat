@@ -31,9 +31,7 @@ def view(request):
                     form = PersonaForm(request.POST)
                     if form.is_valid():
                         actualizar_instancia_con_form(vendedor,form)
-                        messages.success(request, 'Registro guardado con éxito.')
-                        res_json = {"result": True,"mensaje": "Datos Actualizados"}
-                        return JsonResponse(res_json, safe=False)
+                        res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                     else:
                         res_json = {'result': False, "mensaje": "Error en el formulario: {}".format(
                             [{k: v[0]} for k, v in form.errors.items()])}
