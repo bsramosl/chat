@@ -1,44 +1,43 @@
+ const Toast = Swal.mixin({
+            toast: true,
+            position: "bottom-end",
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
         function alertaSuccess(mensaje, time = 5000) {
-            Swal.fire({
-                toast: true,
-                position: 'bottom',
+            Toast.fire({
                 icon: 'success',
                 title: mensaje,
-                showConfirmButton: false,
                 timer: time
-            })
+            });
         }
 
         function alertaWarning(mensaje, time = 5000) {
-            Swal.fire({
-                toast: true,
-                position: 'bottom',
+            Toast.fire({
                 icon: 'warning',
                 title: mensaje,
-                showConfirmButton: false,
                 timer: time
-            })
+            });
         }
 
         function alertaDanger(mensaje, time = 5000) {
-            Swal.fire({
-                toast: true,
-                position: 'bottom',
+            Toast.fire({
                 icon: 'error',
                 title: mensaje,
-                showConfirmButton: false,
                 timer: time
-            })
+            });
         }
 
         function alertaInfo(mensaje, time = 5000) {
-            Swal.fire({
-                toast: true,
-                position: 'bottom',
+            Toast.fire({
                 icon: 'info',
                 title: mensaje,
-                showConfirmButton: false,
                 timer: time
-            })
+            });
         }
-

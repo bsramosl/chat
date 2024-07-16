@@ -1,11 +1,5 @@
 {% extends "base.html" %} {% load static %} {% block cabecera %}
 
-<link
-  href="{% static 'plugins/datatables/plugins/bootstrap/dataTables.bootstrap5.min.css'%}"
-  rel="stylesheet"
-  type="text/css"
-/>
-
 {% endblock %} {% block titulo %}
 <li class="active">{{ title1 }}</li>
 {% endblock %} {% block content %}
@@ -65,7 +59,7 @@
         <h4><b class="paneltitle">FORMULARIO MODAL</b></h4>
       </div>
       <div class="modal-body" style="padding: 1.5%">
-        <form
+        <form id="modal-form"
           class="form-horizontal form-modal"
           autocomplete="off"
           method="post"
@@ -90,39 +84,6 @@
   </div>
 </div>
 {% endblock %} {% block script %}
-    <script>
 
-  function formModal(id, text, action) {
-    $.ajax({
-      type: "GET",
-      url: `{{ request.path }}`,
-      data: {
-        action: action,
-        id: id,
-      },
-      success: function (data) {
-        if (data.result === true) {
-          $.unblockUI();
-          $(".panelbody").html(data.data);
-          $("#itemspanel .paneltitle").html(text);
-          $("#itemspanel")
-            .modal({ backdrop: "static", width: "900px" })
-            .modal("show");
-        } else {
-          $.unblockUI();
-          alertaDanger(data.message);
-        }
-      },
-      error: function () {
-        $.unblockUI();
-        alertaDanger("Error de conexión.");
-      },
-      dataType: "json",
-    });
-  }
-  $(document).on("click", ".close-modal", function () {
-    $(this).parents(".modal").modal("hide");
-  });
-    </script>
 
 {% endblock %}

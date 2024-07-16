@@ -48,12 +48,26 @@ def view(request):
                                 tipo = 'Padre')
 
                     item.save()
-
-                    messages.success(request, 'Registro guardado con éxito.')
-                    res_json = {"result": False}
-                    return redirect(request.META.get('HTTP_REFERER', ''))
+                    res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                 else:
                     res_json = {'result': True, "mensaje": "Error en el formulario: {}".format([{k: v[0]} for k, v in form.errors.items()])}
+            except Exception as ex:
+                transaction.set_rollback(True)
+                res_json = {'result': True, "mensaje": "Error: {}".format(ex)}
+            return JsonResponse(res_json, safe=False)
+
+        if action == 'hijo':
+            try:
+                form = ParentescoForm(request.POST)
+                if form.is_valid():
+                    item = Parentesco(padre_id=int(request.POST['id']),
+                                   hijo=form.cleaned_data['alumno']
+                                      )
+                    item.save()
+                    res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
+                else:
+                    res_json = {'result': True, "mensaje": "Error en el formulario: {}".format(
+                        [{k: v[0]} for k, v in form.errors.items()])}
             except Exception as ex:
                 transaction.set_rollback(True)
                 res_json = {'result': True, "mensaje": "Error: {}".format(ex)}
@@ -68,9 +82,7 @@ def view(request):
                     form = PadreForm(request.POST)
                     if form.is_valid():
                         actualizar_instancia_con_form(vendedor,form)
-                        messages.success(request, 'Registro guardado con éxito.')
-                        res_json = {"result": False}
-                        return redirect(request.META.get('HTTP_REFERER', ''))
+                        res_json = {'result': False, "mensaje": "Registro guardado con éxito."}
                     else:
                         res_json = {'result': True, "mensaje": "Error en el formulario: {}".format(
                             [{k: v[0]} for k, v in form.errors.items()])}
@@ -82,7 +94,9 @@ def view(request):
         elif action == 'eliminar':
             try:
                 item = Persona.objects.get(pk=request.POST['id'])
+                user = User.objects.get(id=item.usuario_id)
                 item.delete()
+                user.delete()
                 res_json = {"result": False, 'message': 'Registro eliminado con éxito.'}
                 return JsonResponse(res_json, safe=False)
             except Exception as ex:
@@ -99,6 +113,32 @@ def view(request):
                 try:
                     data['action'] = 'agregar'
                     form = PadreForm()
+                    form.quitar()
+                    data['form'] = form
+                    template = get_template("padre/form.html")
+                    return JsonResponse({"result": True, 'data': template.render(data)})
+                except Exception as ex:
+                    pass
+
+            if action == 'hijo':
+                try:
+                    data['action'] = 'hijo'
+                    data['id'] = request.GET['id']
+                    form = ParentescoForm()
+                    data['form'] = form
+                    template = get_template("padre/form.html")
+                    return JsonResponse({"result": True, 'data': template.render(data)})
+                except Exception as ex:
+                    pass
+
+            elif action == 'editar':
+                try:
+                    data['id'] = request.GET['id']
+                    data['action'] = 'editar'
+                    data['item'] = item = Persona.objects.get(pk=request.GET['id'])
+                    initial = model_to_dict(item)
+                    initial.update(model_to_dict(item.usuario))
+                    form = PadreForm(initial=initial)
                     form.quitar()
                     data['form'] = form
                     template = get_template("padre/form.html")

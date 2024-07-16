@@ -3,7 +3,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.forms import DateTimeInput
 from datetime import datetime
 
-from .models import UnidadEducativa, Persona, Curso, Materia, Nota, Matricula
+from .models import UnidadEducativa, Persona, Curso, Materia, Nota, Matricula, Parentesco
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):
@@ -74,6 +74,15 @@ class PadreForm(PersonaForm):
         super().__init__(*args, **kwargs)
         self.fields['tipo'].initial = 'padre'
         self.fields['tipo'].widget = forms.HiddenInput()
+
+    def quitar(self):
+        del self.fields['tipo']
+        del self.fields['hijos']
+
+class ParentescoForm(forms.Form):
+    alumno = forms.ModelChoiceField(queryset=Persona.objects.filter(tipo='Alumno'), required=False, label="Hijo",
+                                    widget=forms.Select(attrs={'class': 'form-control'}))
+
 
 
 class ProfesorForm(PersonaForm):
