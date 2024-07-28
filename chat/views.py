@@ -306,15 +306,13 @@ def procesar_respuesta_registro(message):
     global registro_en_proceso,nombre,apellido, fecha_nacimiento, cedula,email
     doc = nlp(message)
     if not nombre:
-        for ent in doc.ents:
-            if ent.label_ == 'PER':
-                nombre = ent.text
-                return "Proporciona tu apellido:"
-        return "No pude reconocer tu nombre. Por favor, proporciona tu nombre."
+       if not message.isdigit():
+           nombre = message
+           return "Proporciona tu apellido:"
+       return "No pude reconocer tu nombre. Por favor, proporciona tu nombre."
     if not apellido:
-        for ent in doc.ents:
-            if ent.label_ == 'PER':
-                apellido = ent.text
+        if not message.isdigit():
+                apellido = message
                 return "Proporciona tu fecha de nacimiento (AAAA-MM-DD):"
         return "No pude reconocer tu apellido. Por favor, proporciona tu apellido."
 
@@ -778,14 +776,17 @@ def iniciar_registro_materia_alumno():
 def procesar_registro_materias_alumno(message):
     try:
         global registro_materia, usuario , cedula ,curso,materia
-        if not cedula:
-           if len(message) == 10 and message.isdigit():
-               if not verificar_cedula(message):
-                   return "Número de cédula incorrecto. Proporciona un número de cédula valido."
-               cedula = message
-               cur = Curso.objects.all()
-               cursos = '\n'.join(f"- {curso.nombre}" for curso in cur)
-               return f"Escoja el el curso:\n{cursos}"
+
+        if len(message) == 10 and message.isdigit():
+            if not verificar_cedula(message):
+                return "Número de cédula incorrecto. Proporciona un número de cédula valido."
+            cedula = message
+            materias = Materia.objects.all()
+            cursos_unicos = materias.values('curso','curso__nombre').distinct()
+            cur = cursos_unicos
+
+            cursos = '\n'.join(f"- {curso['curso__nombre']}" for curso in cursos_unicos)
+            return f"Escoja el el curso:\n{cursos}"
 
         if not curso:
             curso = Curso.objects.filter(nombre=message).first()
@@ -1005,7 +1006,9 @@ def get_session_tp(request):
     return JsonResponse({'tp': tp})
 
 def procesar_salir():
-    global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,personalisada,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,personalisada,\
+        registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,\
+        cambio_contrasena_en_proceso, usuario,nombre,apellido,fecha_nacimiento,cedula,email,curso,materia
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
@@ -1017,6 +1020,15 @@ def procesar_salir():
     contacto_docenteb = False
     mis_profesoresb = False
     contacto_docente_materia_b = False
+    usuario = None
+    nombre = ""
+    apellido = ""
+    fecha_nacimiento = ""
+    cedula = ""
+    email = ""
+    personalisada = ""
+    curso = ""
+    materia = ""
 
     return "Hola👋 Como puedo ayudarte %s." % personalisada
 
