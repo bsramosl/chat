@@ -1026,7 +1026,6 @@ def procesar_salir():
     fecha_nacimiento = ""
     cedula = ""
     email = ""
-    personalisada = ""
     curso = ""
     materia = ""
 
@@ -1034,7 +1033,9 @@ def procesar_salir():
 
 
 def procesarpersonalizada(request):
-    global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,cambio_contrasena_en_proceso
+    global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,registro_en_proceso,\
+        login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,\
+        cambio_contrasena_en_proceso,usuario,nombre,apellido,fecha_nacimiento,cedula,email,curso,materia
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
@@ -1045,6 +1046,14 @@ def procesarpersonalizada(request):
     contacto_docenteb = False
     mis_profesoresb = False
     personalisada = ""
+    usuario = None
+    nombre = ""
+    apellido = ""
+    fecha_nacimiento = ""
+    cedula = ""
+    email = ""
+    curso = ""
+    materia = ""
     cambio_contrasena_en_proceso = False
     contacto_docente_materia_b = False
     if request.session.get('tp'):
