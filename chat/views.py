@@ -693,29 +693,39 @@ def ajustes(request):
     return "No estas logeado?"
 
 def iniciar_misnotas():
-    global mis_notas_alumno
+    global mis_notas_alumno,personalisada,usuario
     mis_notas_alumno = True
+    if personalisada:
+        return procesar_mis_notas_alumno(personalisada.cedula)
+    if usuario:
+        return procesar_mis_notas_alumno(usuario['cedula'])
     return "Por favor, proporciona tu numero de cedula para conocer tus notas:"
 
 def procesar_mis_notas_alumno(message):
-    global mis_notas_alumno,cedula
+    global mis_notas_alumno,cedula,usuario,personalisada
+
+    if usuario:
+        persona = Persona.objects.get(cedula=usuario['cedula'])
+
+    if personalisada:
+        persona = Persona.objects.get(cedula=personalisada.cedula)
     if len(message) == 10 and message.isdigit():
         if not verificar_cedula(message):
             return "Número de cédula incorrecto. Proporciona un número de cédula valido."
-        cedula = message
-        try:
-            persona = Persona.objects.get(cedula=cedula)
-            notas = Nota.objects.filter(alumno=persona).select_related('materia').distinct()
-            if notas:
-                materias_y_notas = '\n'.join(f"- {nota.materia.nombre}: {round(nota.nota, 2)}" for nota in notas)
-                procesar_salir()
-                return f"Las materias y notas de {persona.nombre} son:\n{materias_y_notas}"
-                cedula = ""
-            else:
-                cedula = ""
-                return "El alumno no tiene materias registradas."
-        except Exception as e:
-            return "No existe persona registrada con el numero de cedula ingresado"
+        persona = Persona.objects.get(cedula=message)
+
+    try:
+        notas = Nota.objects.filter(alumno=persona).select_related('materia').distinct()
+        if notas:
+            materias_y_notas = '\n'.join(f"- {nota.materia.nombre}: {round(nota.nota, 2)}" for nota in notas)
+            mis_notas_alumno = False
+            return f"Las materias y notas de {persona.nombre} son:\n{materias_y_notas}"
+            cedula = ""
+        else:
+            cedula = ""
+            return "El alumno no tiene materias registradas."
+    except Exception as e:
+        return "No existe persona registrada con el numero de cedula ingresado"
 
 def iniciar_cambio_contrasena():
     global cambio_contrasena_en_proceso
@@ -789,7 +799,7 @@ def procesar_registro_materias_alumno(message):
             return f"Escoja el el curso:\n{cursos}"
 
         if not curso:
-            curso = Curso.objects.filter(nombre=message).first()
+            curso = Curso.objects.filter(nombre=message.lower()).first()
             mat = Materia.objects.filter(curso=curso)
             materias = '\n'.join(f"-{mat.nombre}" for mat in mat)
             return f"Escoja la materia del curso:\n{materias}"
@@ -1008,7 +1018,7 @@ def get_session_tp(request):
 def procesar_salir():
     global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,personalisada,\
         registro_en_proceso,login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,\
-        cambio_contrasena_en_proceso, usuario,nombre,apellido,fecha_nacimiento,cedula,email,curso,materia
+        cambio_contrasena_en_proceso, usuario,nombre,apellido,fecha_nacimiento,cedula,email,curso,materia,registro_materia
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
@@ -1021,6 +1031,8 @@ def procesar_salir():
     mis_profesoresb = False
     contacto_docente_materia_b = False
     usuario = None
+    registro_materia = False
+
     nombre = ""
     apellido = ""
     fecha_nacimiento = ""
@@ -1035,7 +1047,7 @@ def procesar_salir():
 def procesarpersonalizada(request):
     global contacto_docente_materia_b,mis_profesoresb,contacto_docenteb,profesores_hijob,registro_en_proceso,\
         login_en_proceso,mis_materiasb,mis_cursosb,registrar_hijob,notas_hijob,personalisada,\
-        cambio_contrasena_en_proceso,usuario,nombre,apellido,fecha_nacimiento,cedula,email,curso,materia
+        cambio_contrasena_en_proceso,usuario,nombre,apellido,fecha_nacimiento,cedula,email,curso,materia,registro_materia
     registro_en_proceso = False
     login_en_proceso = False
     mis_materiasb = False
@@ -1045,6 +1057,7 @@ def procesarpersonalizada(request):
     profesores_hijob = False
     contacto_docenteb = False
     mis_profesoresb = False
+    registro_materia = False
     personalisada = ""
     usuario = None
     nombre = ""

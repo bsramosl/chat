@@ -123,15 +123,26 @@ for _ in range(100):
 
 # Crear Cursos
 profesores = [persona for persona in personas if persona.tipo == 'Profesor']
+# Lista de nombres de cursos específicos
+nombres_cursos = [
+    "Inicial 1", "Inicial 2", "Pre - Escolar", "Primer Grado", "Segundo Grado",
+    "Tercer Grado", "Cuarto Grado", "Quinto Grado", "Sexto Grado", "Septimo Grado",
+    "Octavo Grado", "Noveno Grado", "Decimo Grado",
+    "Primero de bachillerato Tecnico", "Segundo de bachillerato Tecnico",
+    "Tercero de bachillerato Tecnico", "Primero de bachillerato Ciencias",
+    "Segundo de bachillerato Ciencias", "Tercero de bachillerato Ciencias"
+]
+
 cursos = []
-for _ in range(20):
+for nombre in nombres_cursos:
     curso = Curso(
-        nombre=fake.bs(),
-        unidad_educativa= unidades_educativas[0],
+        nombre=nombre.lower(),
+        unidad_educativa=unidades_educativas[0],
         profesor=random.choice(profesores)
     )
     curso.save()
     cursos.append(curso)
+
 
 # Crear Materias
 materias = []
