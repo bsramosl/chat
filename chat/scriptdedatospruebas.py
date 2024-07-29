@@ -121,7 +121,7 @@ for _ in range(100):
     )
     parentesco.save()
 
-# Crear Cursos
+# Crear cursos específicos
 profesores = [persona for persona in personas if persona.tipo == 'Profesor']
 # Lista de nombres de cursos específicos
 nombres_cursos = [
@@ -142,7 +142,6 @@ for nombre in nombres_cursos:
     )
     curso.save()
     cursos.append(curso)
-
 
 # Crear Materias
 materias = []
