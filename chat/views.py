@@ -179,13 +179,13 @@ def generate_response(message,request):
                 try:
                     personalisada = Persona.objects.get(cedula=message)
                     request.session['tp'] = personalisada.tipo
-                    return f"En que puedo ayudarte \n{personalisada.nombre}"
+                    return f"En que puedo ayudarte,  \n{personalisada.nombre}"
                 except Exception as e:
                     return "No existe persona registrada con el numero de cedula ingresado"
 
     # Si no hay un proceso de registro en curso, procesar como de costumbre
     if not registro_en_proceso:
-    
+
         responses = {
             "login": iniciar_login,
             "iniciar sesion": iniciar_login,
@@ -204,7 +204,7 @@ def generate_response(message,request):
             "cambiar contraseña": iniciar_cambio_contrasena,
             "mis notas": iniciar_misnotas,
             "registrar hijo": registrar_hijo,
-            "registrar materias alumno":iniciar_registro_materia_alumno,
+            "registrar materias alumno": iniciar_registro_materia_alumno,
             "contacto del docente": contacto_docente,
             "mis profesores": mis_profesores,
             "mis estudiantes": mis_estudiantes,
@@ -216,59 +216,67 @@ def generate_response(message,request):
             "qué puedes hacer": "Puedo responder preguntas básicas. ¿Qué te gustaría saber?",
             "quién eres": "Soy un chatbot creado para ayudarte. ¿En qué puedo asistirte?",
             "gracias": "De nada. ¿Hay algo más en lo que pueda ayudarte?",
-            "cómo me puedo registrar": "Para registrarte, puedes iniciar el proceso escribiendo 'registro'.",
-            "cuáles son los requisitos": "Los requisitos para registrarse incluyen nombre completo, fecha de nacimiento, correo electrónico y número de cédula.",
-            "cómo registro a mi hijo": "Para registrar a tu hijo, por favor proporciona los detalles de su nombre,apellido, fecha de nacimiento, número de identificación y correo.",
-            "qué cursos hay": "Actualmente ofrecemos una variedad de cursos. Por favor visita nuestra página web para más detalles.",
-            "cuánto cuesta el registro": "El costo del registro varía dependiendo del curso. Por favor, visita nuestra página de tarifas para más detalles.",
+
+            "cómo me puedo registrar en este chatbot": "Para registrarte, puedes iniciar el proceso seleccionando la opción de 'registro' dentro del menú de opciones.",
+            "cuáles son los requisitos para el registro en el chatbot": "Los requisitos para registrarse incluyen nombre completo, fecha de nacimiento, correo electrónico y número de cédula.",
+            "cómo registro a mi hijo en el chatbot": "Para registrar a tu hijo identificate con tu número de cedula y selecciona la opción de 'registrar hijo' y proporciona los detalles de su nombre,apellido, fecha de nacimiento, número de identificación y correo.",
+            "cuándo empieza el periodo de inscripcion en la unidad educativa": "El perido de inscripcion empieza desde el mes de mayo hasta el mes de abril acercandose a la entidad para la aceptación de la información.",
+            "cuáles son los documentos de ingreso del estudiante para la institución": "Los documentos son los siguiente: planilla de luz, 3 fotos tamaño carnet y 1 tamaño pasaporte, correo personal del representante, notas del ultimo perido electivo, copias de cedula a color del estudiante y representante, tipo de sangre.",
+            "qué cursos ofrece la institucion": "Inicial, Inicial2, Básica Preparatoria (1.º grado), Básica Elemental (2.º., 3.º. y 4.º grado), Básica Media( 5.º., 6.º. y 7.º grado), Básica Superior(8.º., 9.º. y 10.º grado), Bachillerato (en ciencias y tecnico).",
+            "qué especialidades tiene el bachillerato": "Bachillerato en ciencias y Bachillerato Tecnico",
             "cuál es su horario de atención": "Nuestro horario de atención es de lunes a viernes, de 9:00 AM a 6:00 PM.",
-            "ofrecen cursos en línea": "Sí, ofrecemos una variedad de cursos en línea. Visita nuestra página web para más información.",
-            "cuánto duran los cursos": "La duración de los cursos varía. Algunos son de unas pocas semanas, mientras que otros pueden durar varios meses.",
-            "qué documentos necesito para el registro": "Necesitas tu identificación oficial, comprobante de domicilio y los documentos específicos del curso que elijas.",
+
+            "cuánto duran los cursos": "El año lectivo debe constar de 200 días laborados, que equivale a 10 meses para el proceso de eduacion",
+            "es necesaria una entrevista para inscribir a mi hijo?": "En algunos casos, sí es necesaria una entrevista para conocer mejor a los padres y al estudiante. Se te informará si esto aplica a tu situación.",
+            "qué tipo de evaluación se realiza para la inscripción?": "Puede realizarse una evaluación académica básica para determinar el nivel de conocimientos del estudiante.",
+            "cuánto cuesta la inscripción": "La cuota de inscripción es de $100.",
+            "cómo sé si mi hijo ha sido aceptado y tiene un cupo asignado?": "Recibirás una notificación por correo electrónico y una llamada telefónica confirmando la aceptación y asignación de cupo de tu hijo.",
+            "cuáles son los siguientes pasos para formalizar la matrícula?": "Los siguientes pasos incluyen firmar los contratos o compromisos de los padres con la institución y realizar los pagos adicionales necesarios, como la matrícula anual.",
+            "qué pagos adicionales debo realizar para completar la matrícula?": "Además de la cuota de inscripción, debes pagar la matrícula anual y otros costos asociados como materiales y uniformes.",
+            "qué documentos adicionales necesito entregar después de la inscripción?": "Puede ser necesario entregar certificados de vacunación, ficha médica y otros documentos específicos que te serán indicados al momento de la inscripción.",
+            "cuándo recibiré el horario de clases de mi hijo?": "Recibirás el horario de clases una semana antes del inicio del semestre escolar.",
+            "cómo puedo conocer a los profesores de mi hijo?": "Podrás conocer a los profesores de tu hijo durante la reunión de bienvenida para padres y en la plataforma educativa o el chatbot identificandote y selccionando la opcion de 'cuales son los profesores de mi hijo'y 'contacto del docente por materia' ",
+            "cómo puedo seguir el rendimiento académico de mi hijo?": "Para conocer el rendimiento academico de tu hijo indetificate con tu numero de cedula y elige la opcion de 'cuales son las notas de mi hijo'",
+
             "cómo puedo contactar con soporte": "Puedes contactar con soporte enviando un correo a soporte@nuestraescuela.com o llamando al (123) 456-7890.",
             "hay descuentos disponibles": "Sí, ofrecemos descuentos para estudiantes, miembros de la misma familia y pagos anticipados.",
             "cómo puedo pagar": "Aceptamos pagos con tarjeta de crédito, débito y transferencias bancarias.",
             "puedo visitar las instalaciones": "Sí, puedes agendar una visita a nuestras instalaciones llamando al (123) 456-7890.",
             "hay plazas disponibles": "La disponibilidad de plazas varía según el curso.",
-            "cómo cancelo mi inscripción": "Para cancelar tu inscripción, por favor contacta con nuestro soporte.",
+            "cómo cancelo mi inscripción": "Para cancelar tu inscripción, por favor contacta con nuestro soporte enviando un correo a soporte@nuestraescuela.com o llamando al (123) 456-7890.",
             "hay actividades extracurriculares": "Sí, ofrecemos una variedad de actividades extracurriculares como deportes, artes y clubes académicos.",
             "puedo cambiar de curso": "Sí, puedes solicitar un cambio de curso contactando con soporte.",
             "cómo se evalúa a los estudiantes": "La evaluación de los estudiantes se realiza a través de exámenes, proyectos y participación en clase.",
             "hay becas disponibles": "Sí, ofrecemos becas para estudiantes destacados y aquellos con necesidades financieras.",
-            "cuándo comienzan los cursos": "Los cursos comienzan en diferentes fechas a lo largo del año. Consulta nuestra página web para el calendario de inicio.",
-            "puedo inscribirme a más de un curso": "Sí, puedes inscribirte a varios cursos, siempre y cuando no haya conflictos de horario.",
-            "qué nivel de español necesito": "Nuestros cursos están diseñados para hablantes nativos y avanzados de español. Consulta los requisitos específicos del curso.",
+            "cuándo comienzan las clases": "las clases empiezan en el mes de abril, a partir del 15 empezando desde bachillerato hasta finalizar con los curso de inicial",
             "tienen estacionamiento": "Sí, nuestras instalaciones cuentan con estacionamiento gratuito para estudiantes.",
             "hay transporte escolar": "Ofrecemos transporte escolar en áreas seleccionadas. Consulta con soporte para más información.",
-            "puedo hablar con un instructor": "Sí, puedes agendar una cita para hablar con un instructor contactando con soporte.",
+            "puedo hablar con algun docente": "Sí, puedes contactarte identificandote con tu numero de cedula y seleccionando la opcion de 'contacto del docente por materia'. ",
+
             "qué pasa si tengo una emergencia y no puedo asistir": "En caso de emergencia, notifica a soporte y haremos los arreglos necesarios para que no pierdas contenido importante.",
             "cómo se manejan las ausencias": "Las ausencias deben justificarse a través de soporte. Se permiten un número limitado de ausencias justificadas por curso.",
             "hay tutorías disponibles": "Sí, ofrecemos tutorías personalizadas. Consulta con soporte para más detalles.",
-            "cómo accedo a mi cuenta en línea": "Puedes acceder a tu cuenta en línea desde nuestra página web usando tu usuario y contraseña.",
+            "necesito ayuda con el formulario de inscripción": "Para recibir ayuda con el formulario de inscripción, puedes contactar con soporte a través de correo o teléfono.",
 
-            "inscripción a cursos": "Para inscribirte a cursos, dirígete a la sección de 'Cursos Disponibles' en tu cuenta y selecciona los cursos en los que deseas inscribirte.",
-            "materias disponibles": "Puedes ver la lista de materias disponibles en la sección 'Materias' de nuestra página web.",
+            "cómo accedo a mi cuenta en línea": "Puedes acceder a tu cuenta en línea desde nuestra chatbot seleccionando la opcion de 'iniciar sesion' usando tu usuario y contraseña.",
             "calificaciones": "Las calificaciones de los alumnos pueden ser consultadas en la sección 'Materias' después de iniciar sesión en tu cuenta como docente.",
             "calificaciones de los hijos": "Puedes ver las calificaciones de tus hijos en la sección  una vez que hayas iniciado sesión en tu cuenta.",
             "cursos del docente": "Los cursos que dicta el docente pueden ser vistos en la sección 'Cursos' al iniciar sesión.",
             "cursos del alumno": "Los cursos en los que está inscrito el alumno pueden ser consultados en la sección 'Materias' después de iniciar sesión en tu cuenta.",
             "información del alumno": "La información detallada del alumno está disponible en la sección 'Perfil' una vez que hayas iniciado sesión.",
-            # Nuevas respuestas agregadas
-            "cómo funciona el proceso de inscripción": "El proceso de inscripción incluye completar el formulario en línea.",
-            "dónde puedo encontrar el formulario de inscripción": "El formulario de inscripción está disponible en la sección de 'Registro' de nuestra página web.",
-            "necesito ayuda con el formulario de inscripción": "Para recibir ayuda con el formulario de inscripción, puedes contactar con soporte a través de correo o teléfono.",
             "cuál es el proceso de matriculación": "El proceso de matriculación incluye la verificación de documentos, la asignación de cursos.",
+            "hay plazos para la inscripción": "Sí, existen plazos específicos para la inscripción. Por favor, consult dentro del chatbot o contacta con soporte para más información.",
             "cómo puedo verificar el estado de mi inscripción": "Puedes verificar el estado de tu inscripción iniciando sesión en tu cuenta y yendo a la sección de mis materias.",
             "qué hacer si tengo problemas con la inscripción en línea": "Si tienes problemas con la inscripción en línea, por favor contacta con soporte para recibir asistencia.",
             "cómo actualizo mis datos personales": "Puedes actualizar tus datos personales iniciando sesión en tu cuenta y accediendo a la sección de 'Perfil'.",
-            "qué debo hacer si olvidé mi contraseña": "Si olvidaste tu contraseña, puedes restablecerla utilizando la opción 'Olvidé mi contraseña' en la página de inicio de sesión.",
+            "qué debo hacer si olvidé mi contraseña": "Si olvidaste tu contraseña, por favor contacta con soporte para recibir asistencia.",
             "hay penalizaciones por cancelar mi inscripción": "Las penalizaciones por cancelar tu inscripción dependen de la política de cancelación del curso. Por favor, revisa los términos o contacta con soporte.",
             "cómo solicito un reembolso": "Para solicitar un reembolso, por favor contacta con soporte y proporciona los detalles de tu inscripción y la razón de la solicitud.",
             "cómo inscribo a más de un hijo": "Para inscribir a más de un hijo, completa el formulario de inscripción por separado para cada uno y sigue el proceso de pago correspondiente.",
+
+            # Nuevas respuestas agregadas
             "hay programas de orientación para nuevos estudiantes": "Sí, ofrecemos programas de orientación para nuevos estudiantes para ayudarles a adaptarse a nuestra institución.",
             "cómo obtengo ayuda financiera para la inscripción": "Para obtener ayuda financiera, puedes aplicar a nuestras becas o planes de financiamiento. Contacta con soporte para más detalles.",
-            "hay plazos para la inscripción": "Sí, existen plazos específicos para la inscripción. Por favor, consulta nuestra página web o contacta con soporte para más información."
-
 
         }
 
@@ -360,7 +368,8 @@ def registro():
                             f"Nombre: {nombre}\n"
                             f"Apellido: {apellido}\n"
                             f"Fecha de nacimiento: {fecha_nacimiento}\n"
-                            f"Cédula: {cedula}")
+                            f"Cédula: {cedula}\n\n"
+                            "Su constraseña por defecto es 'password123'")
     procesar_salir()
     return mensaje_confirmacion
 
@@ -493,7 +502,7 @@ def procesar_respuesta_mis_materias(message):
                     materias_lista = '\n'.join(f"- {materia}" for materia in materias)
                     if persona.tipo == 'Profesor':
                         return f"Tus Materias son:\n{materias_lista}"
-                    return f"Las materias del alumno con cédula {cedula} son:\n{materias_lista}"
+                    return f"Tus materias son:\n{materias_lista}"
                     cedula = ""
                 else:
                     cedula = ""
@@ -506,7 +515,7 @@ def procesar_respuesta_mis_materias(message):
     return "Por favor, proporciona la información solicitada."
 
 def procesar_respuesta_notas_hijo(message):
-    global notas_hijob, cedula,usuario
+    global notas_hijob, cedula,usuario, nombre
     if usuario:
         parentesco = Parentesco.objects.filter(padre__cedula=message).first()
         message = parentesco.hijo.cedula if parentesco is not None else None
@@ -524,7 +533,7 @@ def procesar_respuesta_notas_hijo(message):
                 if notas:
                     materias_y_notas = '\n'.join(f"- {nota.materia.nombre}: {round(nota.nota,2)}" for nota in notas)
                     procesar_salir()
-                    return f"Las materias y notas del alumno con cédula {cedula} son:\n{materias_y_notas}"
+                    return f"Las materias y notas del alumno {persona.cedula} {persona.nombre} son:\n{materias_y_notas}"
                     cedula = ""
                 else:
                     cedula = ""
@@ -674,7 +683,8 @@ def registrohijo():
                             f"Nombre: {nombre}\n"
                             f"Apellido: {apellido}\n"
                             f"Fecha de nacimiento: {fecha_nacimiento}\n"
-                            f"Cédula: {cedula}")
+                            f"Cédula: {cedula}\n\n"
+                            "Su constraseña por defecto es 'password123'")
     procesar_salir()
     return mensaje_confirmacion
 
@@ -719,7 +729,7 @@ def procesar_mis_notas_alumno(message):
         if notas:
             materias_y_notas = '\n'.join(f"- {nota.materia.nombre}: {round(nota.nota, 2)}" for nota in notas)
             mis_notas_alumno = False
-            return f"Las materias y notas de {persona.nombre} son:\n{materias_y_notas}"
+            return f"Las materias y notas de {persona.nombre} {persona.apellidos} son:\n{materias_y_notas}"
             cedula = ""
         else:
             cedula = ""
@@ -817,6 +827,8 @@ def procesar_registro_materias_alumno(message):
             return "Se ha registrado la materia la alumno."
     except Exception as e:
        return f"Ingrese los datos solicitados. Error: {str(e)}"
+
+
 
 
 
